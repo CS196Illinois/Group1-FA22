@@ -330,7 +330,9 @@ while True:
 
         #For events that occur upon clicking the mouse (left)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pass
+            if player.attacking == False: # checking to make sure that we only attack after the first is over 
+                    player.attack()
+                    player.attacking = True
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:

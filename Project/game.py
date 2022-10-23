@@ -120,6 +120,7 @@ class Player(pygame.sprite.Sprite):
         self.move_frame = 0
     
     # Combat
+        self.hp = 100
         self.attacking = False
         self.attack_frame = 0
         self.attack_frame = 0
@@ -143,9 +144,9 @@ class Player(pygame.sprite.Sprite):
         #returns the current key presses
         pressed_keys = pygame.key.get_pressed()
         #accelerates the player in the directiown of the key presses
-        if pressed_keys[K_LEFT]:
+        if pressed_keys[K_a]:
             self.acc.x = -ACC
-        if pressed_keys[K_RIGHT]:
+        if pressed_keys[K_d]:
             self.acc.x = ACC
 
         #Formulas to calculate velocity while accounting for friction
@@ -205,7 +206,7 @@ class Player(pygame.sprite.Sprite):
         if self.attack_frame > 10:
             self.attack_frame = 0
             self.attacking = False
-        
+            
         #check direction for correct animation to display
         if self.direction == "RIGHT":
             self.image = attack_ani_R[self.attack_frame]
@@ -234,7 +235,7 @@ class Player(pygame.sprite.Sprite):
             self.pos.x -= 20
         if self.attack_frame == 10:
             self.pos.x += 20
-    
+
     def jump(self):
         self.rect.x += 1
 
@@ -266,14 +267,13 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         #loads image, gets rect object 
-        self.image = pygame.image.load(os.path.join(assets_path, "Enemy.png"))
+        self.image = pygame.image.load(os.path.join(assets_path, "Enemy1.png"))
         
         self.rect = self.image.get_rect()
         #creates two vectors for pos and velocity with two componenets each
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
         self.hp = 100
-
         #randomizing
         #self.direction takes a random integer betwee 0 and 1
         #self.vel.x will take a value between 2 and 6 (and divide by 2 to make sure its not too fast)
@@ -308,6 +308,8 @@ class Enemy(pygame.sprite.Sprite):
         #displayed the enemy on screen
         displaysurface.blit(self.image, (self.pos.x, self.pos.y))
     def update(self):
+        if self.hp < 30:
+            self.image = pygame.image.load(os.path.join(assets_path, "Enemy2.png"))
         if self.hp < 0:
             self.kill()
 
@@ -339,7 +341,9 @@ while True:
 
         #For events that occur upon clicking the mouse (left)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pass
+            if player.attacking == False: # checking to make sure that we only attack after the first is over 
+                    player.attack(enemy)
+                    player.attacking = True
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:

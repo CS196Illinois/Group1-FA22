@@ -97,11 +97,13 @@ class Ground(pygame.sprite.Sprite):
     def render(self):
         displaysurface.blit(self.image, (self.rect.x, self.rect.y))
 
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load(os.path.join(assets_path, "Player_Sprite_R.png"))
         self.rect = self.image.get_rect()
+        self.swordHit = pygame.Rect(self.rect.right - 20, self.rect.top, 20, self.rect.height)
         self.jumping = False
 
     #  Position and direction
@@ -118,9 +120,15 @@ class Player(pygame.sprite.Sprite):
         self.move_frame = 0
     
     # Combat
+        self.hp = 100
         self.attacking = False
         self.attack_frame = 0
         self.attack_frame = 0
+        self.cooldown = False
+        self.attackDamage = 10
+
+    def render(self):
+        displaysurface.blit(player.image, player.rect)
 
     def move(self):
         #Keep a constant acceleration of 0.5 in the downwards direciton (gravity)
@@ -136,9 +144,9 @@ class Player(pygame.sprite.Sprite):
         #returns the current key presses
         pressed_keys = pygame.key.get_pressed()
         #accelerates the player in the directiown of the key presses
-        if pressed_keys[K_LEFT]:
+        if pressed_keys[K_a]:
             self.acc.x = -ACC
-        if pressed_keys[K_RIGHT]:
+        if pressed_keys[K_d]:
             self.acc.x = ACC
 
         #Formulas to calculate velocity while accounting for friction
@@ -155,6 +163,11 @@ class Player(pygame.sprite.Sprite):
             self.pos.x = WIDTH
         #if we weant to restrict the player to not move past the edge, switch WIDTH and 0
         self.rect.midbottom = self.pos #update rect with new pos
+        if self.direction == "LEFT":
+            self.swordHit.left = self.rect.left
+        else:
+            self.swordHit.left = self.rect.right
+        self.swordHit.top = self.rect.top
 
 
     #only one frame must be updated per game cycle (update function will not cycle through all the movement frames at once)
@@ -186,30 +199,32 @@ class Player(pygame.sprite.Sprite):
                 self.image = run_ani_R[self.move_frame]
             elif self.direction == "LEFT":
                 self.image = run_ani_L[self.move_frame]
+
     
-    def attack(self):
+    def attack(self, enemy):
         #If attack frame has reached the end of sequence, return to base frame
         if self.attack_frame > 10:
             self.attack_frame = 0
             self.attacking = False
-        
+            
         #check direction for correct animation to display
         if self.direction == "RIGHT":
             self.image = attack_ani_R[self.attack_frame]
         elif self.direction == "LEFT":
             self.correction()
             self.image = attack_ani_L[self.attack_frame]
+        if self.swordHit.colliderect(enemy.rect):
+            self.player_hit(enemy)
         
         #update the current attack frame
         self.attack_frame += 1
-    def player_hit(self):
+    def player_hit(self, enemy):
         if self.cooldown == False: #if cooldown is over 
             self.cooldown = True #enable the cooldown
-            pygame.time.set_timer(hit_cooldown, 1000) #resets cooldown
-
+            pygame.time.set_timer(hit_cooldown, 500) #resets cooldown
+            enemy.hp -= 10
             #for now!! 
             print("hit")
-            pygame.display.update()
     
     #cancels out the 20 pixels error during the left attack
     #when we turn our character from right to left and attack, the center point of image changes (pushes player back)
@@ -220,7 +235,7 @@ class Player(pygame.sprite.Sprite):
             self.pos.x -= 20
         if self.attack_frame == 10:
             self.pos.x += 20
-    
+
     def jump(self):
         self.rect.x += 1
 
@@ -246,19 +261,19 @@ class Player(pygame.sprite.Sprite):
                 if self.pos.y < lowest.rect.bottom:
                     self.pos.y = lowest.rect.top + 1
                     self.vel.y = 0
-                    self.jumping - False
+                    self.jumping = False
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         #loads image, gets rect object 
-        self.image = pygame.image.load(os.path.join(assets_path, "Enemy.png"))
+        self.image = pygame.image.load(os.path.join(assets_path, "Enemy1.png"))
         
         self.rect = self.image.get_rect()
         #creates two vectors for pos and velocity with two componenets each
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
-
+        self.hp = 100
         #randomizing
         #self.direction takes a random integer betwee 0 and 1
         #self.vel.x will take a value between 2 and 6 (and divide by 2 to make sure its not too fast)
@@ -293,17 +308,10 @@ class Enemy(pygame.sprite.Sprite):
         #displayed the enemy on screen
         displaysurface.blit(self.image, (self.pos.x, self.pos.y))
     def update(self):
-        #checks for collision with the player
-        hits = pygame.sprite.spritecollide(self, Playergroup, False)
-
-        #activates upon either of the two expressions being true
-        if hits and player.attacking == True:
+        if self.hp < 30:
+            self.image = pygame.image.load(os.path.join(assets_path, "Enemy2.png"))
+        if self.hp < 0:
             self.kill()
-            #print("enemy killed")
-        #if collision has occured and player not attacking, call "hit" function
-        #basically collision has happened and player not attacking, must mean that the enemy is attacking
-        elif hits and player.attacking == False:
-            player.player_hit()
 
 #put all sprite groups in the global space 
 background = Background()
@@ -315,6 +323,9 @@ player = Player()
 Playergroup = pygame.sprite.Group()
 Playergroup.add(player)
 enemy = Enemy()
+enemygroup = pygame.sprite.Group()
+enemygroup.add(enemy)
+
 
 
 #Creating game and event loop
@@ -330,14 +341,16 @@ while True:
 
         #For events that occur upon clicking the mouse (left)
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pass
+            if player.attacking == False: # checking to make sure that we only attack after the first is over 
+                    player.attack(enemy)
+                    player.attacking = True
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 player.jump()
             if event.key == pygame.K_RETURN: # enter key 
                 if player.attacking == False: # checking to make sure that we only attack after the first is over 
-                    player.attack()
+                    player.attack(enemy)
                     player.attacking = True
         #automatically disables cooldown once something is hit 
         if event.type == hit_cooldown:
@@ -346,7 +359,7 @@ while True:
     
     player.update()
     if player.attacking == True:
-        player.attack()
+        player.attack(enemy)
     player.move()
     # Render functions ----
     #order matters, we must draw the background before drawing the ground
@@ -355,11 +368,11 @@ while True:
     background.render()
     ground.render()
     #rendering sprites
-    displaysurface.blit(player.image, player.rect)
-    enemy.render()
-    enemy.update()
-    enemy.move()
-    
+    player.render()
+    for i in enemygroup:
+        i.update()
+        i.move()
+        i.render()
 
     pygame.display.update()
     FPS_CLOCK.tick(FPS)

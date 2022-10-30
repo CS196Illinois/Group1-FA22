@@ -172,7 +172,7 @@ class Player(pygame.sprite.Sprite):
         if self.attack_frame == 10:
             self.pos.x += 20
 
-    def jump(self):
+    def jump(self, ground_group):
         self.rect.x += 1
 
         #check to see if player is in contact with the ground 

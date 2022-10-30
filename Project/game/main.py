@@ -71,7 +71,7 @@ while True:
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                player.jump()
+                player.jump(ground_group)
             if event.key == pygame.K_RETURN: # enter key 
                 if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)

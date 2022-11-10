@@ -159,6 +159,10 @@ class Player(pygame.sprite.Sprite):
             self.cooldown = True #enable the cooldown
             pygame.time.set_timer(hit_cooldown, 500) #resets cooldown
             enemy.hp -= 10
+            if self.direction == "LEFT":
+                enemy.pos.x -= 30
+            else:
+                enemy.pos.x += 30
             #for now!! 
             print("hit")
     

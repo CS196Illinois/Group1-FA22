@@ -66,6 +66,12 @@ attack_ani_L = [pygame.image.load(os.path.join(assets_path, "Player_Sprite_L.png
                 pygame.image.load(os.path.join(assets_path, "Player_Attack5_L.png")),pygame.image.load(os.path.join(assets_path, "Player_Attack5_L.png")),
                 pygame.image.load(os.path.join(assets_path, "Player_Sprite_L.png"))]
 
+bishop_idle_R = [pygame.image.load(os.path.join(assets_path, "1.png")), pygame.image.load(os.path.join(assets_path, "2.png")),
+                pygame.image.load(os.path.join(assets_path, "3.png")),pygame.image.load(os.path.join(assets_path, "4.png")),
+                pygame.image.load(os.path.join(assets_path, "5.png")),pygame.image.load(os.path.join(assets_path, "6.png")),
+
+                pygame.image.load(os.path.join(assets_path, "1.png"))]
+
 #initializing classes
 #creating barebones of main classes
 
@@ -274,6 +280,7 @@ class Enemy(pygame.sprite.Sprite):
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
         self.hp = 100
+        self.vel.y = -3
         #randomizing
         #self.direction takes a random integer betwee 0 and 1
         #self.vel.x will take a value between 2 and 6 (and divide by 2 to make sure its not too fast)
@@ -311,7 +318,32 @@ class Enemy(pygame.sprite.Sprite):
         if self.hp < 30:
             self.image = pygame.image.load(os.path.join(assets_path, "Enemy2.png"))
         if self.hp < 0:
-            self.kill()
+            if self.pos.y > HEIGHT:
+                self.kill()
+            self.image = pygame.image.load(os.path.join(assets_path, "EnemyInverse.png"))
+            self.vel.y += 0.15
+            self.pos.y += self.vel.y
+
+class Bishop(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load(os.path.join(assets_path, "Enemy1.png"))
+        self.rect = self.image.get_rect()
+        self.pos = vec(0, 0)
+        self.vel = vec(0, 0)
+        self.hp = 100
+        self.direction = random.randint(0, 1) #0 for right, 1 for left
+        self.vel.x = random.randint(2, 6) / 2 #randomizing velocity of enemy
+
+        if self.direction == 0:
+            self.pos.x = 50
+            self.pos.y = 100
+        if self.direction == 1:
+            self.pos.x = WIDTH - 50
+            self.pos.y = 100
+    def render(self):
+            #displayed the enemy on screen
+            displaysurface.blit(self.image, (self.pos.x, self.pos.y))
 
 #put all sprite groups in the global space 
 background = Background()
@@ -323,9 +355,10 @@ player = Player()
 Playergroup = pygame.sprite.Group()
 Playergroup.add(player)
 enemy = Enemy()
+bishop = Bishop()
 enemygroup = pygame.sprite.Group()
 enemygroup.add(enemy)
-
+enemygroup.add(bishop)
 
 
 #Creating game and event loop

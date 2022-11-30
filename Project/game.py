@@ -69,7 +69,6 @@ attack_ani_L = [pygame.image.load(os.path.join(assets_path, "Player_Sprite_L.png
 bishop_idle_R = [pygame.image.load(os.path.join(assets_path, "1.png")), pygame.image.load(os.path.join(assets_path, "2.png")),
                 pygame.image.load(os.path.join(assets_path, "3.png")),pygame.image.load(os.path.join(assets_path, "4.png")),
                 pygame.image.load(os.path.join(assets_path, "5.png")),pygame.image.load(os.path.join(assets_path, "6.png")),
-
                 pygame.image.load(os.path.join(assets_path, "1.png"))]
 
 #initializing classes
@@ -358,7 +357,7 @@ enemy = Enemy()
 bishop = Bishop()
 enemygroup = pygame.sprite.Group()
 enemygroup.add(enemy)
-enemygroup.add(bishop)
+#enemygroup.add(bishop)
 
 
 #Creating game and event loop

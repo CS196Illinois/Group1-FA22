@@ -65,6 +65,9 @@ class Player(pygame.sprite.Sprite):
 
     def render(self, sur, player):
         sur.blit(player.image, player.rect)
+    
+    def getX(self):
+        return self.pos.x
 
     def move(self):
         #Keep a constant acceleration of 0.5 in the downwards direciton (gravity)

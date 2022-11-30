@@ -12,6 +12,7 @@ from player import *
 pygame.init()
 class Bishop(Enemy):
     is_summoning = False
+    death = False
     def __init__(self, assets_path):
         super().__init__(assets_path)
         self.move_frame = 0
@@ -79,7 +80,7 @@ class Bishop(Enemy):
         self.rect = self.image.get_rect()
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
-        self.hp = 100
+        self.hp = 30
         self.direction = random.randint(0, 1) #0 for right, 1 for left
         self.vel.x = random.randint(2, 6) / 2 #randomizing velocity of enemy
 
@@ -114,6 +115,7 @@ class Bishop(Enemy):
             return
         self.image = self.bishop_idle_R[self.move_frame]
         self.move_frame += 1
+        
 
     def updateLeft(self, assets_path):
         if self.move_frame > 11:
@@ -121,6 +123,11 @@ class Bishop(Enemy):
             return
         self.image = self.bishop_idle_L[self.move_frame]
         self.move_frame += 1
+
+    def update(self, assest_path):
+        if self.hp == 0:
+            self.kill()
+            self.death = True
 
         
     def render(self, sur):

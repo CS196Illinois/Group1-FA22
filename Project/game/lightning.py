@@ -10,10 +10,11 @@ from enemy import *
 from player import *
 
 pygame.init()
-
+hit = False
 class Lightning(Enemy):
     def __init__(self, assets_path, posx, posy):
         super().__init__(assets_path)
+        self.hit = False
         self.move_frame = 0
         self.lightning_effect_A =  [pygame.image.load(os.path.join(assets_path, "F01.png")),
                                     pygame.image.load(os.path.join(assets_path, "F01.png")),
@@ -72,15 +73,19 @@ class Lightning(Enemy):
 
         self.image = pygame.image.load(os.path.join(assets_path, "F01.png"))
         self.rect = self.image.get_rect()
-        self.pos = vec(posx - 100, 75)
+        self.pos = vec(posx - 100, 85)
         self.vel = vec(0, 0)
         self.hp = 100
         self.playerpos = 0
 
     
     
-    def update(self, assets_path):
+    def update(self, assets_path, player):
         self.rect.center = self.pos
+        if abs(self.rect.centerx + 100 - player.rect.centerx) < 80:
+            if self.hit == False:
+                print("hit")
+            self.hit = True
         if self.move_frame >= 53:
             self.kill()
         self.image = self.lightning_effect_A[self.move_frame]

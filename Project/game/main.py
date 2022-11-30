@@ -73,6 +73,7 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
+                    player.attack(bishop)
                     player.attacking = True
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
@@ -81,6 +82,7 @@ while True:
             if event.key == pygame.K_RETURN: # enter key 
                 if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
+                    player.attack(bishop)
                     player.attacking = True
         #automatically disables cooldown once something is hit 
         if event.type == hit_cooldown:
@@ -90,13 +92,14 @@ while True:
         if event.type == TELEPORT:
             bishop.teleport(assets_path)
 
-        if event.type == SUMMONLIGHTNING: 
+        if event.type == SUMMONLIGHTNING and bishop.death == False: 
             bishop.is_summoning = True
             cclock = clock
 
     player.update()
     if player.attacking == True:
         player.attack(enemy)
+        player.attack(bishop)
     player.move()
     # Render functions ----
     #order matters, we must draw the background before drawing the ground
@@ -116,7 +119,7 @@ while True:
             else:
                 i.updateRight(assets_path)
     for i in lightninggroup:
-        i.update(assets_path)
+        i.update(assets_path, player)
         i.render(displaysurface)
     if clock - cclock == 0:
         cpos = player.pos.x

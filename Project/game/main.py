@@ -49,8 +49,8 @@ player = Player(assets_path)
 Playergroup = pygame.sprite.Group()
 Playergroup.add(player)
 enemy = Enemy(assets_path)
-bishop = Bishop(assets_path)
 enemygroup = pygame.sprite.Group()
+bishop = Bishop(assets_path)
 enemygroup.add(bishop)
 enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
@@ -89,10 +89,10 @@ while True:
             player.cooldown = False
             pygame.time.set_timer(hit_cooldown, 0)
         
-        if event.type == TELEPORT:
+        if event.type == TELEPORT and bishop.death == False:
             bishop.teleport(assets_path)
 
-        if event.type == SUMMONLIGHTNING and bishop.death == False: 
+        if event.type == SUMMONLIGHTNING and bishop.death == False and enemy.death == True: 
             bishop.is_summoning = True
             cclock = clock
 
@@ -110,10 +110,14 @@ while True:
     #rendering sprites
     player.render(displaysurface, player)
     for i in enemygroup:
-        i.update(assets_path)
-        i.move()
-        i.render(displaysurface)
-        if i == bishop and bishop.is_summoning == False:
+        if i != bishop:
+            i.update(assets_path)
+            i.move()
+            i.render(displaysurface)
+        elif i == bishop and bishop.is_summoning == False:
+            i.move()
+            i.update(assets_path)
+            i.render(displaysurface, enemy)
             if (bishop.pos.x > player.pos.x):
                 i.updateLeft(assets_path)
             else:
@@ -130,6 +134,9 @@ while True:
 
     if bishop.is_summoning == True:
         bishop.summon(assets_path)
+        bishop.render(displaysurface, enemy)
+        bishop.move()
+        bishop.update(assets_path)
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
     clock += 1

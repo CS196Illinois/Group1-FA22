@@ -9,6 +9,7 @@ from constants import *
 
 pygame.init()
 class Enemy(pygame.sprite.Sprite):
+    death = False
     def __init__(self, assets_path):
         super().__init__()
         #loads image, gets rect object 
@@ -18,7 +19,7 @@ class Enemy(pygame.sprite.Sprite):
         #creates two vectors for pos and velocity with two componenets each
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
-        self.hp = 100
+        self.hp = 10
         #randomizing
         #self.direction takes a random integer betwee 0 and 1
         #self.vel.x will take a value between 2 and 6 (and divide by 2 to make sure its not too fast)
@@ -57,3 +58,4 @@ class Enemy(pygame.sprite.Sprite):
             self.image = pygame.image.load(os.path.join(assets_path, "Enemy2.png"))
         if self.hp < 0:
             self.kill()
+            self.death = True

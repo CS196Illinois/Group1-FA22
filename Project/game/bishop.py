@@ -17,6 +17,7 @@ class Bishop(Enemy):
         super().__init__(assets_path)
         self.move_frame = 0
         self.summon_frame = 0
+        self.death_frame = 0
         self.bishop_idle_R = [pygame.image.load(os.path.join(assets_path, "1.png")),
                             pygame.image.load(os.path.join(assets_path, "2.png")),
                             pygame.image.load(os.path.join(assets_path, "2.png")),

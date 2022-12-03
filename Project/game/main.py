@@ -12,6 +12,7 @@ from player import *
 from enemy import *
 from bishop import *
 from lightning import *
+from button import *
 
 #initializing variables and settings
 
@@ -27,7 +28,7 @@ print(assets_path)
 #loading animations
 #creates display for pygame video, and changes title of window to "game"
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Game")
+pygame.display.set_caption("Pawn's Game")
 
 
 #creates an event called hit_cooldown by adding 1 into the current index of pygame events
@@ -37,10 +38,33 @@ pygame.display.set_caption("Game")
 #initializing classes
 #creating barebones of main classes
 
+#intro materials
+background2 = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
+ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
+start_img = pygame.image.load(os.path.join(assets_path, "start_btn.png"))
+exit_img = pygame.image.load(os.path.join(assets_path, "exit_button.png"))
+start_button = Button(100, 200, start_img, 0.8)
+exit_button = Button(450, 200, exit_img, 0.8)
+start_run = True
+game_run = False
+while start_run:
+    background2.render(displaysurface)
+    ground.render(displaysurface)
+    if (start_button.draw(displaysurface)):
+        start_run = False
+        game_run = True
+
+    if (exit_button.draw(displaysurface)):
+        start_run = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+    pygame.display.update()
 
 
 #put all sprite groups in the global space 
-background = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
+background2 = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
 ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
 #the collision detection functions that detect collisions requires a sprite group as a paramter
 ground_group = pygame.sprite.Group()
@@ -57,11 +81,11 @@ lightninggroup = pygame.sprite.Group()
 clock = 1001
 cclock = 0
 
-
 #Creating game and event loop
+
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
-while True:
+while game_run:
     player.gravity_check(player, ground_group)
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
@@ -102,10 +126,10 @@ while True:
         player.attack(bishop)
     player.move()
     # Render functions ----
-    #order matters, we must draw the background before drawing the ground
+    #order matters, we must draw the background2 before drawing the ground
     
-    #display and background related functions
-    background.render(displaysurface)
+    #display and background2 related functions
+    background2.render(displaysurface)
     ground.render(displaysurface)
     #rendering sprites
     player.render(displaysurface, player)

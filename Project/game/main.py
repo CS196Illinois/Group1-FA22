@@ -73,8 +73,8 @@ player = Player(assets_path)
 Playergroup = pygame.sprite.Group()
 Playergroup.add(player)
 enemy = Enemy(assets_path)
-enemygroup = pygame.sprite.Group()
 bishop = Bishop(assets_path)
+enemygroup = pygame.sprite.Group()
 enemygroup.add(bishop)
 enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
@@ -164,3 +164,4 @@ while game_run:
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
     clock += 1
+

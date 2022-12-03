@@ -9,6 +9,7 @@ from constants import *
 
 pygame.init()
 class Enemy(pygame.sprite.Sprite):
+    death = False
     def __init__(self, assets_path):
         super().__init__()
         #loads image, gets rect object 
@@ -18,12 +19,13 @@ class Enemy(pygame.sprite.Sprite):
         #creates two vectors for pos and velocity with two componenets each
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
-        self.hp = 100
+        self.hp = 10
         #randomizing
         #self.direction takes a random integer betwee 0 and 1
         #self.vel.x will take a value between 2 and 6 (and divide by 2 to make sure its not too fast)
         self.direction = random.randint(0, 1) #0 for right, 1 for left
-        self.vel.x = random.randint(2, 6) / 2 #randomizing velocity of enemy
+        self.vel.x = 4 #randomizing velocity of enemy
+        self.cooldown = False
 
         #sets starting position 
         #sets the initial position of the enemy
@@ -60,3 +62,18 @@ class Enemy(pygame.sprite.Sprite):
             self.image = pygame.image.load(os.path.join(assets_path, "Enemy2.png"))
         if self.hp < 0:
             self.kill()
+            self.death = True
+
+    def enemy_hit(self, player):
+        if self.cooldown == False: #if cooldown is over 
+            self.cooldown = True #enable the cooldown
+            pygame.time.set_timer(enemy_cooldown, 500) #resets cooldown
+            player.current_health -= 10
+            if self.direction == 1:
+                player.pos.x -= 50
+                self.pos.x += 50
+            else:
+                player.pos.x += 50
+                self.pos.x -= 50
+            #for now!! 
+            print("enemy hit")

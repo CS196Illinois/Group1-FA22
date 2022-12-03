@@ -11,12 +11,14 @@ from player import *
 
 pygame.init()
 class Bishop(Enemy):
+    killed = False
     is_summoning = False
     death = False
     def __init__(self, assets_path):
         super().__init__(assets_path)
         self.move_frame = 0
         self.summon_frame = 0
+        self.death_frame = 0
         self.bishop_idle_R = [pygame.image.load(os.path.join(assets_path, "1.png")),
                             pygame.image.load(os.path.join(assets_path, "2.png")),
                             pygame.image.load(os.path.join(assets_path, "2.png")),
@@ -42,6 +44,14 @@ class Bishop(Enemy):
                             pygame.image.load(os.path.join(assets_path, "6L.png")),
                             pygame.image.load(os.path.join(assets_path, "6L.png")),
                             pygame.image.load(os.path.join(assets_path, "1L.png"))]
+
+        self.bishop_death =  [pygame.image.load(os.path.join(assets_path, "death0.png")),
+                            pygame.image.load(os.path.join(assets_path, "death1.png")),
+                            pygame.image.load(os.path.join(assets_path, "death2.png")),
+                            pygame.image.load(os.path.join(assets_path, "death3.png")),
+                            pygame.image.load(os.path.join(assets_path, "death4.png")),
+                            pygame.image.load(os.path.join(assets_path, "death5.png")),
+                            pygame.image.load(os.path.join(assets_path, "death6.png"))]
 
         self.bishop_summon = [pygame.image.load(os.path.join(assets_path, "00.png")),
                             pygame.image.load(os.path.join(assets_path, "00.png")),
@@ -76,20 +86,14 @@ class Bishop(Enemy):
                             pygame.image.load(os.path.join(assets_path, "70.png")),
                             pygame.image.load(os.path.join(assets_path, "70.png"))]
 
+        self.death_pic = pygame.image.load(os.path.join(assets_path, "grave.png"))
+
         self.image = pygame.image.load(os.path.join(assets_path, "1.png"))
         self.rect = self.image.get_rect()
-        self.pos = vec(0, 0)
+        self.d = 0
+        self.pos = vec(WIDTH / 2, HEIGHT / 2)
         self.vel = vec(0, 0)
         self.hp = 30
-        self.direction = random.randint(0, 1) #0 for right, 1 for left
-        self.vel.x = random.randint(2, 6) / 2 #randomizing velocity of enemy
-
-        if self.direction == 0:
-            self.pos.x = 50
-            self.pos.y = 100
-        if self.direction == 1:
-            self.pos.x = WIDTH - 50
-            self.pos.y = 100
 
     def teleport(self, assests_path):
         self.pos = vec(random.randint(20, WIDTH-20), random.randint(100, 200))
@@ -110,26 +114,35 @@ class Bishop(Enemy):
         
 
     def updateRight(self, assets_path):
-        if self.move_frame > 11:
-            self.move_frame = 0
-            return
-        self.image = self.bishop_idle_R[self.move_frame]
-        self.move_frame += 1
+        if self.hp > 0:
+            self.image = self.bishop_idle_R[self.move_frame]
+            self.move_frame += 1
+            if self.move_frame > 11:
+                self.move_frame = 0
+                return
         
 
     def updateLeft(self, assets_path):
-        if self.move_frame > 11:
-            self.move_frame = 0
-            return
-        self.image = self.bishop_idle_L[self.move_frame]
-        self.move_frame += 1
+        if self.hp > 0:
+            self.image = self.bishop_idle_L[self.move_frame]
+            self.move_frame += 1
+            if self.move_frame > 11:
+                self.move_frame = 0
+                return
 
     def update(self, assest_path):
-        if self.hp == 0:
-            self.kill()
+        if self.hp <= 0:
+            self.image = self.bishop_death[int(self.death_frame)]
+            self.death_frame += 0.05
+            if self.death_frame > 6:
+                self.pos.y = 180
+                self.death_frame = 6.5
+                self.image = self.death_pic
+                return
             self.death = True
 
         
-    def render(self, sur):
+    def render(self, sur, enemy):
             #displayed the enemy on screen
-            sur.blit(self.image, self.rect)
+            if enemy.death == True:
+                sur.blit(self.image, self.rect)

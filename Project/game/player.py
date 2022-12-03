@@ -40,7 +40,6 @@ class Player(pygame.sprite.Sprite):
         self.move_frame = 0
     
     # Combat
-        self.hp = 100
         self.attacking = False
         self.attack_frame = 0
         self.attack_frame = 0
@@ -194,9 +193,9 @@ class Player(pygame.sprite.Sprite):
             pygame.time.set_timer(hit_cooldown, 500) #resets cooldown
             enemy.hp -= 10
             if self.direction == "LEFT":
-                enemy.pos.x -= 30
+                enemy.pos.x -= 50
             else:
-                enemy.pos.x += 30
+                enemy.pos.x += 50
             #for now!! 
             print("hit")
     
@@ -236,3 +235,4 @@ class Player(pygame.sprite.Sprite):
                     self.pos.y = lowest.rect.top + 1
                     self.vel.y = 0
                     self.jumping = False
+

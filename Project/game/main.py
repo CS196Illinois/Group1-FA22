@@ -90,6 +90,10 @@ while True:
         if event.type == hit_cooldown:
             player.cooldown = False
             pygame.time.set_timer(hit_cooldown, 0)
+
+        if event.type == enemy_cooldown:
+            enemy.cooldown = False
+            pygame.time.set_timer(enemy_cooldown, 0)
         
         if event.type == TELEPORT and bishop.death == False:
             bishop.teleport(assets_path)
@@ -121,7 +125,10 @@ while True:
     for i in enemygroup:
         if i != bishop:
             i.update(assets_path)
-            i.move()
+            if i.cooldown == False:
+                i.move()
+            if i.rect.colliderect(player.rect):
+                i.enemy_hit(player)
             i.render(displaysurface)
         elif i == bishop and bishop.is_summoning == False:
             i.move()

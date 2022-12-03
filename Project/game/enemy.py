@@ -19,7 +19,7 @@ class Enemy(pygame.sprite.Sprite):
         #creates two vectors for pos and velocity with two componenets each
         self.pos = vec(0, 0)
         self.vel = vec(0, 0)
-        self.hp = 10
+        self.hp = 4
         #randomizing
         #self.direction takes a random integer betwee 0 and 1
         #self.vel.x will take a value between 2 and 6 (and divide by 2 to make sure its not too fast)

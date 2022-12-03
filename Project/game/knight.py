@@ -104,6 +104,7 @@ class Knight(Enemy):
             if self.crush == True:
                 if abs(self.rect.centerx - player.rect.centerx) < 25 and abs(self.rect.bottom - player.rect.top) < 10:
                     print('crushed')
+                    player.current_health -= 15
                 self.image = self.knight_AFA[int(self.crush_frame)]
                 self.crush_frame += 0.1
                 if self.crush_frame > 2:

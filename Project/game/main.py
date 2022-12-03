@@ -100,6 +100,7 @@ while True:
             player.cooldown = False
             pygame.time.set_timer(hit_cooldown, 0)
         
+        
         if event.type == TELEPORT and bishop.death == False and bishop.is_summoning == False:
             bishop.teleport(assets_path)
 

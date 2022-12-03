@@ -13,6 +13,8 @@ from enemy import *
 from bishop import *
 from lightning import *
 from Cannon import*
+#from Bullet import*
+
 #initializing variables and settings
 
 pygame.init() #begin pygame
@@ -55,6 +57,11 @@ enemygroup.add(bishop)
 enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
 cannon = Cannon(assets_path)
+enemygroup.add(cannon)
+bulletgroup = pygame.sprite.Group()
+bullet = Bullet(assets_path, cannon)
+bulletgroup.add(bullet)
+pygame.time.set_timer(BULLLETFIRE, 2000)
 clock = 1001
 cclock = 0
 
@@ -63,6 +70,7 @@ cclock = 0
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
 while True:
+    #print('bullet x: ' + str(bullet.x) + ' y: ' + str(bullet.y))
     player.gravity_check(player, ground_group)
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
@@ -98,6 +106,12 @@ while True:
         if event.type == SUMMONLIGHTNING and bishop.death == False: 
             bishop.is_summoning = True
             cclock = clock
+        
+        if (event.type == BULLLETFIRE and cannon.flag):
+            print(2)
+            b = Bullet(assets_path, cannon)
+            bulletgroup.add(b)
+            pygame.time.set_timer(BULLLETFIRE, 2000)
 
     player.update()
     if player.attacking == True:
@@ -125,8 +139,6 @@ while True:
     for i in lightninggroup:
         i.update(assets_path, player)
         i.render(displaysurface)
-    # for i in Cannon:
-
     if clock - cclock == 0:
         cpos = player.pos.x
     if clock - cclock == 30 or clock - cclock == 60 or clock - cclock == 90 or clock - cclock == 120 or clock - cclock == 150:
@@ -134,6 +146,10 @@ while True:
         lightninggroup.add(lightning)
         cpos = player.pos.x
 
+    for i in bulletgroup:
+        i.move()
+        i.render(displaysurface)
+    
     if bishop.is_summoning == True:
         bishop.summon(assets_path)
     pygame.display.update()

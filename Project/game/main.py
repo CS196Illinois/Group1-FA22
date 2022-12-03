@@ -132,6 +132,10 @@ while game_run:
         if event.type == hit_cooldown:
             player.cooldown = False
             pygame.time.set_timer(hit_cooldown, 0)
+
+        if event.type == enemy_cooldown:
+            enemy.cooldown = False
+            pygame.time.set_timer(enemy_cooldown, 0)
         
         if event.type == TELEPORT and bishop.death == False:
             bishop.teleport(assets_path)
@@ -147,6 +151,9 @@ while game_run:
     player.move()
     # Render functions ----
     #order matters, we must draw the background2 before drawing the ground
+    #order matters, we must draw the background before drawing the ground
+    if player.current_health == 0:
+        player.kill()
     
     #display and background2 related functions
     background2.render(displaysurface)
@@ -156,7 +163,8 @@ while game_run:
     pygame.draw.rect(displaysurface,(255,255,255),(10,10,200,25),4)
     
     #rendering sprites
-    player.render(displaysurface, player)
+    for p in Playergroup:
+        p.render(displaysurface, player)
     # if player.health > 0:
     #     displaysurface.blit(player.image, player.rect)
 #    health.render()
@@ -164,7 +172,11 @@ while game_run:
         if i != bishop:
             level = 1
             i.update(assets_path)
-            i.move()
+            if i.cooldown == False:
+                i.move()
+            for j in Playergroup:
+                if i.rect.colliderect(j.rect):
+                    i.enemy_hit(j)
             i.render(displaysurface)
         elif i == bishop and bishop.is_summoning == False:
             level = 2

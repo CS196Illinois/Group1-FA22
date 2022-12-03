@@ -59,35 +59,18 @@ enemygroup = pygame.sprite.Group()
 enemygroup.add(enemy)
 
 #health bars
-def healthBar(self):
-        transition_width = 0
-        transition_color = (255,0,0)
 
-        if self.current_health < self.target_health:
-            self.current_health += self.health_change_speed
-            transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-            transition_color = (0,255,0)
-
-        if self.current_health > self.target_health:
-            self.current_health -= self.health_change_speed
-            transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-            transition_color = (255,255,0)
+       # health_bar = pygame.Rect(10,45,health_bar_width,25)
+       # health_bar_rect = pygame.Rect(10,45,self.current_health / self.health_ratio,25)
+       # transition_bar_rect = pygame.Rect(health_bar_rect.right,45,transition_width,25)
         
-        health_bar_rect = pygame.Rect(10,45,self.current_health / self.health_ratio,25)
-        transition_bar_rect = pygame.Rect(health_bar_rect.right,45,transition_width,25)
          
-        	
-
-
 #Creating game and event loop
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
 while True:
     player.gravity_check(player, ground_group)
-    print('line 87')
-    pygame.draw.rect(displaysurface,(255,0,0),health_bar)
-    pygame.draw.rect(displaysurface,transition_color,transition_bar)
-    pygmae.draw.rect(displaysurface,(255,255,255),(10,45,self.health_bar_length,25),4)
+    #print('line 87')
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
         if event.type == QUIT:
@@ -122,10 +105,17 @@ while True:
     #display and background related functions
     background.render(displaysurface)
     ground.render(displaysurface)
+    #healthbar
+    pygame.draw.rect(displaysurface,player.get_healthbar_color(),(10,10,player.get_heatlhbar_length(),25))
+    pygame.draw.rect(displaysurface,(255,255,255),(10,10,200,25),4)
+    
+    
+    #pygame.draw.rect(displaysurface,transition_color,player.transition_bar)
+    #pygmae.draw.rect(displaysurface,(255,255,255),(10,45,self.health_bar_length,25),4)
     #rendering sprites
-#    player.render(displaysurface, player, health)
-#    if player.heatlh > 0:
-#            displaysurface.blit(player.image, player.rect)
+    player.render(displaysurface, player)
+    # if player.health > 0:
+    #     displaysurface.blit(player.image, player.rect)
 #    health.render()
     for i in enemygroup:
         i.update(assets_path)

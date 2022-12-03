@@ -16,12 +16,16 @@ class Player(pygame.sprite.Sprite):
         self.swordHit = pygame.Rect(self.rect.right - 20, self.rect.top, 20, self.rect.height)
         self.jumping = False
 #       self.health_ani = health_ani
-        self.current_health = 200
+        self.current_health = .5
         self.target_health = 500
-        self.max_health = 1000
+        self.max_health = 200
         self.health_bar_length = 400
-        self.health_ratio = self.max_health / self.health_bar_length
-        self.health_change_speed = 5
+        #self.health_ratio = self.max_health / self.health_bar_length
+        #self.health_change_speed = 5
+        #self.health_bar_width = int(self.current_health / self.health_ratio)
+        #self.health_bar = pygame.Rect(10,40,self.health_bar_width,25)
+        #self.transition_bar = pygame.Rect(self.health_bar.right,45,self.transition_width,25) 
+    
     #  Position and direction
         self.vx = 0
         self.pos = vec((340, 240)) #pos of player
@@ -43,6 +47,7 @@ class Player(pygame.sprite.Sprite):
         self.cooldown = False
         self.attackDamage = 10
 
+        
     #run animation for the right:
         self.run_ani_R = [pygame.image.load(os.path.join(assets_path, "Player_Sprite_R.png")), pygame.image.load(os.path.join(assets_path, "Player_Sprite2_R.png")),
              pygame.image.load(os.path.join(assets_path, "Player_Sprite3_R.png")),pygame.image.load(os.path.join(assets_path, "Player_Sprite4_R.png")),
@@ -122,12 +127,21 @@ class Player(pygame.sprite.Sprite):
             self.target_health += amount
         if self.target_health > self.max_health:
             self.target_health = self.max_health
-
+    
+    def get_heatlhbar_length(self):
+        return self.max_health * self.current_health 
+    def get_healthbar_color(self):
+        if self.current_health >= 0.7:
+            return (50,200,75)
+        if self.current_health < 0.7 and self.current_health >= 0.5:
+            return (255,255,0)
+        if self.current_health < 0.5:
+            return (255,0,0)    
     #only one frame must be updated per game cycle (update function will not cycle through all the movement frames at once)
     #it will keep incrementing them by one (every time called)
     def update(self):
         # health bar updates
-        self.healthBar()
+        #self.healthBar()
 	   
         # return to base frame if at end of movement sequence
         if self.move_frame > 6:
@@ -156,6 +170,26 @@ class Player(pygame.sprite.Sprite):
             elif self.direction == "LEFT":
                 self.image = self.run_ani_L[self.move_frame]
 
+    #def healthBar(self):
+		
+        #transition_width = 0
+        #transition_color = (255,0,0)
+
+        #if self.current_health < self.target_health:
+        #    self.current_health += self.health_change_speed
+        #    transition_width = int((self.target_health - self.current_health) / self.health_ratio)
+        #    transition_color = (0,255,0)
+
+        #if self.current_health > self.target_health:
+        #    self.current_health -= self.health_change_speed
+        #    transition_width = int((self.target_health - self.current_health) / self.health_ratio)
+        #    transition_color = (255,255,0)
+
+        #self.health_bar_width = int(self.current_health / self.health_ratio)
+        #self.health_bar = pygame.Rect(10,40,self.health_bar_width,25)
+        #self.transition_bar = pygame.Rect(health_bar.right,45,transition_width,25)    
+    
+    
     #def basic_health(self):
     #        pygame.draw.rect(screen,(255,0,0),(10,10,self.target_health / self.health_ratio,25))
     #       pygame.draw.rect(screen,(255,255,255),(10,10,self.health_bar_length,25),4)

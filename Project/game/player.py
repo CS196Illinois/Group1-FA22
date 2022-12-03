@@ -76,6 +76,9 @@ class Player(pygame.sprite.Sprite):
 
     def render(self, sur, player):
         sur.blit(player.image, player.rect)
+    
+    def getX(self):
+        return self.pos.x
 
     def move(self):
         #Keep a constant acceleration of 0.5 in the downwards direciton (gravity)
@@ -233,14 +236,10 @@ class Player(pygame.sprite.Sprite):
             self.cooldown = True #enable the cooldown
             pygame.time.set_timer(hit_cooldown, 500) #resets cooldown
             enemy.hp -= 10
-
-#            self.health = self.health - 1
-#            health.image = health_ani[self.health]
-         
-#            if self.health <= 0:
-#                self.kill()
-#                pygame.display.update()
-
+            if self.direction == "LEFT":
+                enemy.pos.x -= 30
+            else:
+                enemy.pos.x += 30
             #for now!! 
             print("hit")
     
@@ -280,4 +279,3 @@ class Player(pygame.sprite.Sprite):
                     self.pos.y = lowest.rect.top + 1
                     self.vel.y = 0
                     self.jumping = False
-

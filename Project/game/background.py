@@ -21,6 +21,7 @@ class Background(pygame.sprite.Sprite):
     #render is used to display the background onto the window
     #blit will draw an image object with the input coordinate as the origin point 
     #origin is the top left corner of the pygame window
+    
 
     def render(self, sur):
         sur.blit(self.bgimage, (self.bgX, self.bgY))

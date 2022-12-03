@@ -10,7 +10,14 @@ from background import *
 from ground import *
 from player import *
 from enemy import *
+from bishop import *
+from lightning import *
+<<<<<<< HEAD
 #from healthBar import *
+=======
+from bishop import *
+from lightning import *
+>>>>>>> sw57_bishopdeathanimation
 
 #initializing variables and settings
 
@@ -56,15 +63,20 @@ Playergroup = pygame.sprite.Group()
 Playergroup.add(player)
 enemy = Enemy(assets_path)
 enemygroup = pygame.sprite.Group()
+bishop = Bishop(assets_path)
+enemygroup.add(bishop)
 enemygroup.add(enemy)
+lightninggroup = pygame.sprite.Group()
+clock = 1001
+cclock = 0
+<<<<<<< HEAD
 
 #health bars
-
-       # health_bar = pygame.Rect(10,45,health_bar_width,25)
-       # health_bar_rect = pygame.Rect(10,45,self.current_health / self.health_ratio,25)
-       # transition_bar_rect = pygame.Rect(health_bar_rect.right,45,transition_width,25)
-        
-         
+=======
+lightninggroup = pygame.sprite.Group()
+clock = 1001
+cclock = 0
+>>>>>>> sw57_bishopdeathanimation
 #Creating game and event loop
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
@@ -81,6 +93,7 @@ while True:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
+                    player.attack(bishop)
                     player.attacking = True
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
@@ -89,15 +102,24 @@ while True:
             if event.key == pygame.K_RETURN: # enter key 
                 if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
+                    player.attack(bishop)
                     player.attacking = True
         #automatically disables cooldown once something is hit 
         if event.type == hit_cooldown:
             player.cooldown = False
             pygame.time.set_timer(hit_cooldown, 0)
-    
+        
+        if event.type == TELEPORT and bishop.death == False:
+            bishop.teleport(assets_path)
+
+        if event.type == SUMMONLIGHTNING and bishop.death == False and enemy.death == True: 
+            bishop.is_summoning = True
+            cclock = clock
+
     player.update()
     if player.attacking == True:
         player.attack(enemy)
+        player.attack(bishop)
     player.move()
     # Render functions ----
     #order matters, we must draw the background before drawing the ground
@@ -118,10 +140,33 @@ while True:
     #     displaysurface.blit(player.image, player.rect)
 #    health.render()
     for i in enemygroup:
-        i.update(assets_path)
-        i.move()
+        if i != bishop:
+            i.update(assets_path)
+            i.move()
+            i.render(displaysurface)
+        elif i == bishop and bishop.is_summoning == False:
+            i.move()
+            i.update(assets_path)
+            i.render(displaysurface, enemy)
+            if (bishop.pos.x > player.pos.x):
+                i.updateLeft(assets_path)
+            else:
+                i.updateRight(assets_path)
+    for i in lightninggroup:
+        i.update(assets_path, player)
         i.render(displaysurface)
+    if clock - cclock == 0:
+        cpos = player.pos.x
+    if clock - cclock == 30 or clock - cclock == 60 or clock - cclock == 90 or clock - cclock == 120 or clock - cclock == 150:
+        lightning = Lightning(assets_path, cpos, player.rect.bottom)
+        lightninggroup.add(lightning)
+        cpos = player.pos.x
 
+    if bishop.is_summoning == True:
+        bishop.summon(assets_path)
+        bishop.render(displaysurface, enemy)
+        bishop.move()
+        bishop.update(assets_path)
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
-
+    clock += 1

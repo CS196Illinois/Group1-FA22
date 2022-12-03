@@ -84,7 +84,8 @@ class Lightning(Enemy):
         self.rect.center = self.pos
         if abs(self.rect.centerx + 100 - player.rect.centerx) < 80:
             if self.hit == False:
-                print("hit")
+                print("THUNDERSTRUCK!!!")
+                player.current_health -= 5
             self.hit = True
         if self.move_frame >= 53:
             self.kill()

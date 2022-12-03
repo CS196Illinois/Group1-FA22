@@ -34,7 +34,7 @@ class Enemy(pygame.sprite.Sprite):
         if self.direction == 1:
             self.pos.x = 700
             self.pos.y = 235
-    def move(self, player=None):
+    def move(self, player):
         # causes the enemy to change directions upon reaching the end of screen
         if self.pos.x >= (WIDTH-20): # makes sure there is a little margin between the enemy and the screen
             self.direction = 1

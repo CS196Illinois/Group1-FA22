@@ -78,7 +78,7 @@ while True:
                     player.attack(enemy)
                     if knight.death == True:
                         player.attack(bishop)
-                    if enemy.death == True:
+                    if enemy.death == True and knight.jmpcooldown == True:
                         player.attack(knight)
                     player.attacking = True
         #event handling for a range of different key presses
@@ -90,7 +90,7 @@ while True:
                     player.attack(enemy)
                     if knight.death == True:
                         player.attack(bishop)
-                    if enemy.death == True:
+                    if enemy.death == True and knight.jmpcooldown == True:
                         player.attack(knight)
                     player.attacking = True
         #automatically disables cooldown once something is hit 
@@ -116,7 +116,7 @@ while True:
         player.attack(enemy)
         if knight.death == True:
             player.attack(bishop)
-        if enemy.death == True:
+        if enemy.death == True and knight.jmpcooldown == True:
             player.attack(knight)
     player.move()
     # Render functions ----
@@ -130,7 +130,7 @@ while True:
     for i in enemygroup:
         if i != bishop:
             i.update(assets_path, player.pos.x)
-            i.move()
+            i.move(player.rect)
             i.render(displaysurface, enemy)
         elif i == bishop and bishop.is_summoning == False:
             i.move()

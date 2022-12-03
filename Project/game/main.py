@@ -10,6 +10,7 @@ from background import *
 from ground import *
 from player import *
 from enemy import *
+#from healthBar import *
 
 #initializing variables and settings
 
@@ -20,7 +21,7 @@ base_path = os.path.dirname(__file__)
 print(base_path)
 
 assets_path = os.path.join(base_path, "Assets")
-print(assets_path)
+print("line 24: " + str(assets_path))
 
 #loading animations
 #creates display for pygame video, and changes title of window to "game"
@@ -33,6 +34,9 @@ pygame.display.set_caption("Game")
 
 
 #initializing classes
+
+#health = HealthBar()
+
 #creating barebones of main classes
 
 
@@ -41,6 +45,10 @@ pygame.display.set_caption("Game")
 background = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
 ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
 #the collision detection functions that detect collisions requires a sprite group as a paramter
+#health_ani = [pygame.image.load(os.path.join(assets_path, "heart0.png")), pygame.image.load(os.path.join(assets_path, "heart.png")),
+##              pygame.image.load(os.path.join(assets_path, "heart2.png")), pygame.image.load(os.path.join(assets_path, "heart3.png")),
+# #             pygame.image.load(os.path.join(assets_path, "heart4.png")), pygame.image.load(os.path.join(assets_path, "heart5.png"))]
+
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
 player = Player(assets_path)
@@ -50,6 +58,25 @@ enemy = Enemy(assets_path)
 enemygroup = pygame.sprite.Group()
 enemygroup.add(enemy)
 
+#health bars
+def healthBar(self):
+        transition_width = 0
+        transition_color = (255,0,0)
+
+        if self.current_health < self.target_health:
+            self.current_health += self.health_change_speed
+            transition_width = int((self.target_health - self.current_health) / self.health_ratio)
+            transition_color = (0,255,0)
+
+        if self.current_health > self.target_health:
+            self.current_health -= self.health_change_speed
+            transition_width = int((self.target_health - self.current_health) / self.health_ratio)
+            transition_color = (255,255,0)
+        
+        health_bar_rect = pygame.Rect(10,45,self.current_health / self.health_ratio,25)
+        transition_bar_rect = pygame.Rect(health_bar_rect.right,45,transition_width,25)
+         
+        	
 
 
 #Creating game and event loop
@@ -57,6 +84,10 @@ enemygroup.add(enemy)
 #an event is created every time something happens 
 while True:
     player.gravity_check(player, ground_group)
+    print('line 87')
+    pygame.draw.rect(displaysurface,(255,0,0),health_bar)
+    pygame.draw.rect(displaysurface,transition_color,transition_bar)
+    pygmae.draw.rect(displaysurface,(255,255,255),(10,45,self.health_bar_length,25),4)
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
         if event.type == QUIT:
@@ -92,7 +123,10 @@ while True:
     background.render(displaysurface)
     ground.render(displaysurface)
     #rendering sprites
-    player.render(displaysurface, player)
+#    player.render(displaysurface, player, health)
+#    if player.heatlh > 0:
+#            displaysurface.blit(player.image, player.rect)
+#    health.render()
     for i in enemygroup:
         i.update(assets_path)
         i.move()

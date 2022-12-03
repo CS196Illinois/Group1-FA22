@@ -15,7 +15,13 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.swordHit = pygame.Rect(self.rect.right - 20, self.rect.top, 20, self.rect.height)
         self.jumping = False
-
+#       self.health_ani = health_ani
+        self.current_health = 200
+        self.target_health = 500
+        self.max_health = 1000
+        self.health_bar_length = 400
+        self.health_ratio = self.max_health / self.health_bar_length
+        self.health_change_speed = 5
     #  Position and direction
         self.vx = 0
         self.pos = vec((340, 240)) #pos of player
@@ -104,11 +110,25 @@ class Player(pygame.sprite.Sprite):
         else:
             self.swordHit.left = self.rect.right
         self.swordHit.top = self.rect.top
+# health bar stuff
+    def get_damage(self,amount):
+        if self.target_health > 0:
+            self.target_health -= amount
+        if self.target_health < 0:
+            self.target_health = 0
 
+    def get_health(self,amount):
+        if self.target_health < self.max_health:
+            self.target_health += amount
+        if self.target_health > self.max_health:
+            self.target_health = self.max_health
 
     #only one frame must be updated per game cycle (update function will not cycle through all the movement frames at once)
     #it will keep incrementing them by one (every time called)
     def update(self):
+        # health bar updates
+        self.healthBar()
+	   
         # return to base frame if at end of movement sequence
         if self.move_frame > 6:
             self.move_frame = 0 #we have 7 frames
@@ -136,7 +156,27 @@ class Player(pygame.sprite.Sprite):
             elif self.direction == "LEFT":
                 self.image = self.run_ani_L[self.move_frame]
 
-    
+    #def basic_health(self):
+    #        pygame.draw.rect(screen,(255,0,0),(10,10,self.target_health / self.health_ratio,25))
+    #       pygame.draw.rect(screen,(255,255,255),(10,10,self.health_bar_length,25),4)
+
+   # def advanced_health(self):
+   #     transition_width = 0
+   #     transition_color = (255,0,0)
+
+    #    if self.current_health < self.target_health:
+    #        self.current_health += self.health_change_speed
+    #        transition_width = int((self.target_health - self.current_health) / self.health_ratio)
+    #        transition_color = (0,255,0)
+
+    #    if self.current_health > self.target_health:
+    #        self.current_health -= self.health_change_speed
+    #        transition_width = int((self.target_health - self.current_health) / self.health_ratio)
+    #        transition_color = (255,255,0)
+        
+    #    health_bar_rect = pygame.Rect(10,45,self.current_health / self.health_ratio,25)
+    #    transition_bar_rect = pygame.Rect(health_bar_rect.right,45,transition_width,25)     
+
     def attack(self, enemy):
         #If attack frame has reached the end of sequence, return to base frame
         if self.attack_frame > 10:
@@ -159,6 +199,14 @@ class Player(pygame.sprite.Sprite):
             self.cooldown = True #enable the cooldown
             pygame.time.set_timer(hit_cooldown, 500) #resets cooldown
             enemy.hp -= 10
+
+#            self.health = self.health - 1
+#            health.image = health_ani[self.health]
+         
+#            if self.health <= 0:
+#                self.kill()
+#                pygame.display.update()
+
             #for now!! 
             print("hit")
     

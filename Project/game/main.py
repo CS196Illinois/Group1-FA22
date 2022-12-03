@@ -12,6 +12,8 @@ from player import *
 from enemy import *
 from bishop import *
 from lightning import *
+from bishop import *
+from lightning import *
 from button import *
 
 #initializing variables and settings
@@ -24,19 +26,18 @@ base_path = os.path.dirname(__file__)
 print(base_path)
 
 assets_path = os.path.join(base_path, "Assets")
-print(assets_path)
+print("line 24: " + str(assets_path))
 
 #loading animations
 #creates display for pygame video, and changes title of window to "game"
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pawn's Game")
 
-
 #creates an event called hit_cooldown by adding 1 into the current index of pygame events
 #makes surue that pygame won't record 60 collisions (how many it checks for in one second)
 
-
 #initializing classes
+
 #creating barebones of main classes
 
 #intro materials
@@ -77,7 +78,12 @@ while start_run:
 #victory screen
 victory_image = pygame.image.load(os.path.join(assets_path, "victoryScreen.jpg"))
 congrats = Background(victory_image, 0.7, 0.4)
+
+#game over screen
+game_over_image = pygame.image.load(os.path.join(assets_path, "game_over.jpg"))
+game_over = Background(game_over_image, 1.2, 1)
 #the collision detection functions that detect collisions requires a sprite group as a paramter
+
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
 player = Player(assets_path)
@@ -91,19 +97,21 @@ enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
 clock = 1001
 cclock = 0
-level = 0
-
+lightninggroup = pygame.sprite.Group()
+clock = 1001
+cclock = 0
 #Creating game and event loop
 
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
 while game_run:
     player.gravity_check(player, ground_group)
+    #print('line 87')
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
         if event.type == QUIT:
             pygame.quit()
-            sys.exit
+            sys.exit()
 
         #For events that occur upon clicking the mouse (left)
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -143,8 +151,15 @@ while game_run:
     #display and background2 related functions
     background2.render(displaysurface)
     ground.render(displaysurface)
+    #healthbar
+    pygame.draw.rect(displaysurface,player.get_healthbar_color(),(10,10,player.get_heatlhbar_length(),25))
+    pygame.draw.rect(displaysurface,(255,255,255),(10,10,200,25),4)
+    
     #rendering sprites
     player.render(displaysurface, player)
+    # if player.health > 0:
+    #     displaysurface.blit(player.image, player.rect)
+#    health.render()
     for i in enemygroup:
         if i != bishop:
             level = 1
@@ -180,8 +195,15 @@ while game_run:
         congrats.render(displaysurface)
         if exitVictory.draw(displaysurface):
             pygame.quit()
+
+    if player.current_health <= 0:
+        player.alive = False
+        player.kill()
+        bishop.kill()
+        game_over.render(displaysurface)
+        if exitVictory.draw(displaysurface):
+            pygame.quit()
     
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
     clock += 1
-

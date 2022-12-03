@@ -17,6 +17,7 @@ from button import *
 #initializing variables and settings
 
 pygame.init() #begin pygame
+pygame.font.init()
 
 #create absolute path
 base_path = os.path.dirname(__file__)
@@ -47,11 +48,17 @@ exit_img = pygame.image.load(os.path.join(assets_path, "exit_button.png"))
 start_button = Button(100, 200, start_img, 0.8)
 exit_button = Button(450, 200, exit_img, 0.8)
 exitVictory = Button(500, 300, exit_img, 0.3)
+
+#text
+titleFont = pygame.font.SysFont('Courier', 100)
+text_surface = titleFont.render('PAWN', False, (0, 0, 0))
+#game start vars
 start_run = True
 game_run = False
 while start_run:
     background2.render(displaysurface)
     ground.render(displaysurface)
+    displaysurface.blit(text_surface, (250, 50))
     if (start_button.draw(displaysurface)):
         start_run = False
         game_run = True

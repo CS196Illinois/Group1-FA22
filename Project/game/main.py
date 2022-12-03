@@ -12,12 +12,8 @@ from player import *
 from enemy import *
 from bishop import *
 from lightning import *
-<<<<<<< HEAD
-#from healthBar import *
-=======
 from bishop import *
 from lightning import *
->>>>>>> sw57_bishopdeathanimation
 
 #initializing variables and settings
 
@@ -69,14 +65,9 @@ enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
 clock = 1001
 cclock = 0
-<<<<<<< HEAD
-
-#health bars
-=======
 lightninggroup = pygame.sprite.Group()
 clock = 1001
 cclock = 0
->>>>>>> sw57_bishopdeathanimation
 #Creating game and event loop
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 

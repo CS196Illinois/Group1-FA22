@@ -16,10 +16,10 @@ class Player(pygame.sprite.Sprite):
         self.swordHit = pygame.Rect(self.rect.right - 20, self.rect.top, 20, self.rect.height)
         self.jumping = False
 #       self.health_ani = health_ani
-        self.current_health = .5
         self.target_health = 500
-        self.max_health = 200
-        self.health_bar_length = 400
+        self.max_health = 100
+        self.current_health = self.max_health
+        self.health_bar_length = 200
         #self.health_ratio = self.max_health / self.health_bar_length
         #self.health_change_speed = 5
         #self.health_bar_width = int(self.current_health / self.health_ratio)
@@ -132,13 +132,13 @@ class Player(pygame.sprite.Sprite):
             self.target_health = self.max_health
     
     def get_heatlhbar_length(self):
-        return self.max_health * self.current_health 
+        return self.health_bar_length * (self.current_health / self.max_health) 
     def get_healthbar_color(self):
-        if self.current_health >= 0.7:
+        if self.current_health >= 70:
             return (50,200,75)
-        if self.current_health < 0.7 and self.current_health >= 0.5:
+        if self.current_health < 70 and self.current_health >= 50:
             return (255,255,0)
-        if self.current_health < 0.5:
+        if self.current_health < 50:
             return (255,0,0)    
     #only one frame must be updated per game cycle (update function will not cycle through all the movement frames at once)
     #it will keep incrementing them by one (every time called)

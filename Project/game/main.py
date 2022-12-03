@@ -39,12 +39,14 @@ pygame.display.set_caption("Pawn's Game")
 #creating barebones of main classes
 
 #intro materials
-background2 = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
+backgroundimage = pygame.image.load(os.path.join(assets_path, "Background.png"))
+background2 = Background(backgroundimage, 1, 1)
 ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
 start_img = pygame.image.load(os.path.join(assets_path, "start_btn.png"))
 exit_img = pygame.image.load(os.path.join(assets_path, "exit_button.png"))
 start_button = Button(100, 200, start_img, 0.8)
 exit_button = Button(450, 200, exit_img, 0.8)
+exitVictory = Button(500, 300, exit_img, 0.3)
 start_run = True
 game_run = False
 while start_run:
@@ -63,9 +65,11 @@ while start_run:
     pygame.display.update()
 
 
-#put all sprite groups in the global space 
-background2 = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
-ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
+#put all sprite groups in the global space
+
+#victory screen
+victory_image = pygame.image.load(os.path.join(assets_path, "victoryScreen.jpg"))
+congrats = Background(victory_image, 0.7, 0.4)
 #the collision detection functions that detect collisions requires a sprite group as a paramter
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
@@ -80,6 +84,7 @@ enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
 clock = 1001
 cclock = 0
+level = 0
 
 #Creating game and event loop
 
@@ -135,10 +140,12 @@ while game_run:
     player.render(displaysurface, player)
     for i in enemygroup:
         if i != bishop:
+            level = 1
             i.update(assets_path)
             i.move()
             i.render(displaysurface)
         elif i == bishop and bishop.is_summoning == False:
+            level = 2
             i.move()
             i.update(assets_path)
             i.render(displaysurface, enemy)
@@ -161,6 +168,12 @@ while game_run:
         bishop.render(displaysurface, enemy)
         bishop.move()
         bishop.update(assets_path)
+    
+    if bishop.death == True:
+        congrats.render(displaysurface)
+        if exitVictory.draw(displaysurface):
+            pygame.quit()
+    
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
     clock += 1

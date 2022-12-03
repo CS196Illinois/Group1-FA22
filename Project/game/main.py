@@ -12,7 +12,7 @@ from player import *
 from enemy import *
 from bishop import *
 from lightning import *
-
+from Cannon import*
 #initializing variables and settings
 
 pygame.init() #begin pygame
@@ -54,6 +54,7 @@ enemygroup = pygame.sprite.Group()
 enemygroup.add(bishop)
 enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
+cannon = Cannon(assets_path)
 clock = 1001
 cclock = 0
 
@@ -74,6 +75,7 @@ while True:
             if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
                     player.attack(bishop)
+                    player.attack(cannon)
                     player.attacking = True
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
@@ -83,6 +85,7 @@ while True:
                 if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
                     player.attack(bishop)
+                    player.attack(cannon)
                     player.attacking = True
         #automatically disables cooldown once something is hit 
         if event.type == hit_cooldown:
@@ -100,6 +103,7 @@ while True:
     if player.attacking == True:
         player.attack(enemy)
         player.attack(bishop)
+        player.attack(cannon)
     player.move()
     # Render functions ----
     #order matters, we must draw the background before drawing the ground
@@ -121,6 +125,8 @@ while True:
     for i in lightninggroup:
         i.update(assets_path, player)
         i.render(displaysurface)
+    # for i in Cannon:
+
     if clock - cclock == 0:
         cpos = player.pos.x
     if clock - cclock == 30 or clock - cclock == 60 or clock - cclock == 90 or clock - cclock == 120 or clock - cclock == 150:

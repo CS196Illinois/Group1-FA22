@@ -13,6 +13,8 @@ from enemy import *
 from bishop import *
 from lightning import *
 from knight import *
+from bishop import *
+from lightning import *
 
 #initializing variables and settings
 
@@ -23,27 +25,25 @@ base_path = os.path.dirname(__file__)
 print(base_path)
 
 assets_path = os.path.join(base_path, "Assets")
-print(assets_path)
+print("line 24: " + str(assets_path))
 
 #loading animations
 #creates display for pygame video, and changes title of window to "game"
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
-
 #creates an event called hit_cooldown by adding 1 into the current index of pygame events
 #makes surue that pygame won't record 60 collisions (how many it checks for in one second)
 
-
 #initializing classes
+
 #creating barebones of main classes
-
-
 
 #put all sprite groups in the global space 
 background = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
 ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
 #the collision detection functions that detect collisions requires a sprite group as a paramter
+
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
 player = Player(assets_path)
@@ -59,13 +59,15 @@ enemygroup.add(knight)
 lightninggroup = pygame.sprite.Group()
 clock = 1001
 cclock = 0
-
-
+lightninggroup = pygame.sprite.Group()
+clock = 1001
+cclock = 0
 #Creating game and event loop
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
 while True:
     player.gravity_check(player, ground_group)
+    #print('line 87')
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
         if event.type == QUIT:
@@ -125,8 +127,15 @@ while True:
     #display and background related functions
     background.render(displaysurface)
     ground.render(displaysurface)
+    #healthbar
+    pygame.draw.rect(displaysurface,player.get_healthbar_color(),(10,10,player.get_heatlhbar_length(),25))
+    pygame.draw.rect(displaysurface,(255,255,255),(10,10,200,25),4)
+    
     #rendering sprites
     player.render(displaysurface, player)
+    # if player.health > 0:
+    #     displaysurface.blit(player.image, player.rect)
+#    health.render()
     for i in enemygroup:
         if i != bishop:
             i.update(assets_path, player.pos.x)

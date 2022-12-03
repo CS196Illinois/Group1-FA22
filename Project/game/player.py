@@ -143,8 +143,6 @@ class Player(pygame.sprite.Sprite):
     #only one frame must be updated per game cycle (update function will not cycle through all the movement frames at once)
     #it will keep incrementing them by one (every time called)
     def update(self):
-        # health bar updates
-        #self.healthBar()
 	   
         # return to base frame if at end of movement sequence
         if self.move_frame > 6:
@@ -172,47 +170,6 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.run_ani_R[self.move_frame]
             elif self.direction == "LEFT":
                 self.image = self.run_ani_L[self.move_frame]
-
-    #def healthBar(self):
-		
-        #transition_width = 0
-        #transition_color = (255,0,0)
-
-        #if self.current_health < self.target_health:
-        #    self.current_health += self.health_change_speed
-        #    transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-        #    transition_color = (0,255,0)
-
-        #if self.current_health > self.target_health:
-        #    self.current_health -= self.health_change_speed
-        #    transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-        #    transition_color = (255,255,0)
-
-        #self.health_bar_width = int(self.current_health / self.health_ratio)
-        #self.health_bar = pygame.Rect(10,40,self.health_bar_width,25)
-        #self.transition_bar = pygame.Rect(health_bar.right,45,transition_width,25)    
-    
-    
-    #def basic_health(self):
-    #        pygame.draw.rect(screen,(255,0,0),(10,10,self.target_health / self.health_ratio,25))
-    #       pygame.draw.rect(screen,(255,255,255),(10,10,self.health_bar_length,25),4)
-
-   # def advanced_health(self):
-   #     transition_width = 0
-   #     transition_color = (255,0,0)
-
-    #    if self.current_health < self.target_health:
-    #        self.current_health += self.health_change_speed
-    #        transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-    #        transition_color = (0,255,0)
-
-    #    if self.current_health > self.target_health:
-    #        self.current_health -= self.health_change_speed
-    #        transition_width = int((self.target_health - self.current_health) / self.health_ratio)
-    #        transition_color = (255,255,0)
-        
-    #    health_bar_rect = pygame.Rect(10,45,self.current_health / self.health_ratio,25)
-    #    transition_bar_rect = pygame.Rect(health_bar_rect.right,45,transition_width,25)     
 
     def attack(self, enemy):
         #If attack frame has reached the end of sequence, return to base frame

@@ -31,26 +31,17 @@ print("line 24: " + str(assets_path))
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
-
 #creates an event called hit_cooldown by adding 1 into the current index of pygame events
 #makes surue that pygame won't record 60 collisions (how many it checks for in one second)
 
-
 #initializing classes
 
-#health = HealthBar()
-
 #creating barebones of main classes
-
-
 
 #put all sprite groups in the global space 
 background = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
 ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
 #the collision detection functions that detect collisions requires a sprite group as a paramter
-#health_ani = [pygame.image.load(os.path.join(assets_path, "heart0.png")), pygame.image.load(os.path.join(assets_path, "heart.png")),
-##              pygame.image.load(os.path.join(assets_path, "heart2.png")), pygame.image.load(os.path.join(assets_path, "heart3.png")),
-# #             pygame.image.load(os.path.join(assets_path, "heart4.png")), pygame.image.load(os.path.join(assets_path, "heart5.png"))]
 
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
@@ -122,9 +113,6 @@ while True:
     pygame.draw.rect(displaysurface,player.get_healthbar_color(),(10,10,player.get_heatlhbar_length(),25))
     pygame.draw.rect(displaysurface,(255,255,255),(10,10,200,25),4)
     
-    
-    #pygame.draw.rect(displaysurface,transition_color,player.transition_bar)
-    #pygmae.draw.rect(displaysurface,(255,255,255),(10,45,self.health_bar_length,25),4)
     #rendering sprites
     player.render(displaysurface, player)
     # if player.health > 0:

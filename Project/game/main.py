@@ -109,6 +109,8 @@ while True:
     player.move()
     # Render functions ----
     #order matters, we must draw the background before drawing the ground
+    if player.current_health == 0:
+        player.kill()
     
     #display and background related functions
     background.render(displaysurface)
@@ -118,7 +120,8 @@ while True:
     pygame.draw.rect(displaysurface,(255,255,255),(10,10,200,25),4)
     
     #rendering sprites
-    player.render(displaysurface, player)
+    for p in Playergroup:
+        p.render(displaysurface, player)
     # if player.health > 0:
     #     displaysurface.blit(player.image, player.rect)
 #    health.render()
@@ -127,8 +130,9 @@ while True:
             i.update(assets_path)
             if i.cooldown == False:
                 i.move()
-            if i.rect.colliderect(player.rect):
-                i.enemy_hit(player)
+            for j in Playergroup:
+                if i.rect.colliderect(j.rect):
+                    i.enemy_hit(j)
             i.render(displaysurface)
         elif i == bishop and bishop.is_summoning == False:
             i.move()

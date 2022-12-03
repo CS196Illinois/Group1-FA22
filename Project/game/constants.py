@@ -11,7 +11,8 @@ pygame.init()
 hit_cooldown = pygame.USEREVENT + 1
 SUMMONLIGHTNING = pygame.USEREVENT + 2
 TELEPORT = pygame.USEREVENT + 3
-pygame.time.set_timer(SUMMONLIGHTNING, random.randint(5000, 12000))
+JMPCOOLDOWN = pygame.USEREVENT + 4
+pygame.time.set_timer(SUMMONLIGHTNING, random.randint(3000, 5000))
 pygame.time.set_timer(TELEPORT, random.randint(5000, 10000))
 vec = pygame.math.Vector2 #creates a vector to record x and y pos of Player
 #define height and width of screen

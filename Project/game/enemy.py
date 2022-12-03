@@ -50,12 +50,12 @@ class Enemy(pygame.sprite.Sprite):
             self.pos.x -= self.vel.x
         
         self.rect.center = self.pos #Updates rect 
-    def render(self,sur):
+    def render(self,sur,enemy):
         #displayed the enemy on screen
         sur.blit(self.image, (self.pos.x, self.pos.y))
-    def update(self, assets_path):
+    def update(self, assets_path, player):
         if self.hp < 30:
             self.image = pygame.image.load(os.path.join(assets_path, "Enemy2.png"))
-        if self.hp < 0:
+        if self.hp <= 0:
             self.kill()
             self.death = True

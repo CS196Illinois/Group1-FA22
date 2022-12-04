@@ -275,8 +275,7 @@ while game_run:
         knight.render(displaysurface, cannon)
         knight.move(player)
         knight.update(assets_path, player.pos.x)
-        if knight.hp <= 0:
-            knight.kill()
+        
 
         
     

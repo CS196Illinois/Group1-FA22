@@ -21,6 +21,7 @@ class Knight(Enemy):
         super().__init__(assets_path)
         
         self.move_frame = 0
+        self.tbagframe = 0
         self.attack_frame = 0
         self.crush_frame = 0
         self.vul_frame = 0
@@ -64,6 +65,10 @@ class Knight(Enemy):
                             pygame.image.load(os.path.join(assets_path, "kd1.png")),
                             pygame.image.load(os.path.join(assets_path, "kd2.png")),
                             pygame.image.load(os.path.join(assets_path, "kd3.png"))]
+        
+        self.knight_TBAG = [pygame.image.load(os.path.join(assets_path, "kd3.png")),
+                            pygame.image.load(os.path.join(assets_path, "vul1.png")),
+                            pygame.image.load(os.path.join(assets_path, "vul2.png"))]
 
         self.image = pygame.image.load(os.path.join(assets_path, "k0-modified.png"))
         self.rect = self.image.get_rect()
@@ -110,10 +115,12 @@ class Knight(Enemy):
                     return
         if self.hp <= 0:
             self.image = self.knight_DEATH[int(self.death_frame)]
+            self.vel.x = 0
+            self.acc.x = 0
             self.death_frame += 0.1
             if self.death_frame > 4:
                 self.death = True
-                self.kill()
+                self.death_frame = 0
     def jump(self, player, enemy):
         #print('rect center: ' + str(self.rect.center) + 'rect bottom ' + str(self.rect.bottom) +'player bottom ' + str(player.rect.bottom))
         if enemy.death == True and self.hp > 0:
@@ -148,22 +155,28 @@ class Knight(Enemy):
                     self.acc.y = 0
                     pygame.time.set_timer(JMPCOOLDOWN, 3000)
             if self.jmpcooldown == True:
-                if self.dwn_frame < 4:
-                    self.image = self.knight_DWN[int(self.dwn_frame)]
-                else:
-                    self.image = self.knight_VUL[int(self.vul_frame)]
-                    self.vul_frame += 0.2
-                    if self.vul_frame > 3:
-                        self.vul_frame = 0
+             #   if player.current_health <= 0:
+             #       self.image = self.knight_TBAG[int(self.tbagframe)]
+             #       if self.tbagframe > 4:
+             #           self.tbagframe = 0
+               # else:
 
-                self.dwn_frame += 0.3
+                    if self.dwn_frame < 4:
+                        self.image = self.knight_DWN[int(self.dwn_frame)]
+                    else:
+                        self.image = self.knight_VUL[int(self.vul_frame)]
+                        self.vul_frame += 0.2
+                        if self.vul_frame > 3:
+                            self.vul_frame = 0
+
+                    self.dwn_frame += 0.3
 
 
-                self.vel.x = 0
-                self.acc.x = 0
+                    self.vel.x = 0
+                    self.acc.x = 0
     def render(self, sur, enemy):
             #displayed the enemy on screen
-        if enemy.death == True and self.hp > 0:
+        if enemy.death == True and self.death == False:
             sur.blit(self.image, self.rect)
 
         

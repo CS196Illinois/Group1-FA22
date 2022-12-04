@@ -181,7 +181,6 @@ class Player(pygame.sprite.Sprite):
         if self.current_health <= 0 and self.death_frame < 9:
             self.image = self.death_ani[int(self.death_frame)]
             self.death_frame += 0.2
-            print("player dies")
         if self.death_frame >= 9:
             self.death = True
             return

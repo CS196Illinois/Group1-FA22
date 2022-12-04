@@ -116,7 +116,7 @@ class Knight(Enemy):
                 self.kill()
     def jump(self, player, enemy):
         #print('rect center: ' + str(self.rect.center) + 'rect bottom ' + str(self.rect.bottom) +'player bottom ' + str(player.rect.bottom))
-        if enemy.death == True:
+        if enemy.death == True and self.hp > 0:
             if abs((player.pos.x - 50) - self.pos.x) <= 230 and self.jmpcooldown == False:
                 self.is_jumping = True
             if self.is_jumping == True and self.crush == False and self.jmpcooldown == False:
@@ -163,7 +163,7 @@ class Knight(Enemy):
                 self.acc.x = 0
     def render(self, sur, enemy):
             #displayed the enemy on screen
-        if enemy.death == True:
+        if enemy.death == True and self.hp > 0:
             sur.blit(self.image, self.rect)
 
         

@@ -14,6 +14,7 @@ class Bishop(Enemy):
     killed = False
     is_summoning = False
     death = False
+    deathcounter = 0
     def __init__(self, assets_path):
         super().__init__(assets_path)
         self.move_frame = 0
@@ -136,24 +137,25 @@ class Bishop(Enemy):
         self.rect.center = self.pos
 
     def summon(self, assests_path, player):
-        if self.pos.x < player:
-            if self.summon_frame > 31:
-                self.is_summoning = False
-                self.summon_frame = 0
-                return
-            self.rect.bottom -= 50
-            self.rect.left -= 100
-            self.image = self.bishop_summon[self.summon_frame]
-            self.summon_frame += 1
-        else:
-            if self.summon_frame > 31:
-                self.is_summoning = False
-                self.summon_frame = 0
-                return
-            self.rect.bottom -= 50
-            self.rect.left -= 100
-            self.image = self.bishop_summon_L[self.summon_frame]
-            self.summon_frame += 1
+        if self.hp > 0:
+            if self.pos.x < player:
+                if self.summon_frame > 31:
+                    self.is_summoning = False
+                    self.summon_frame = 0
+                    return
+                self.rect.bottom -= 50
+                self.rect.left -= 100
+                self.image = self.bishop_summon[self.summon_frame]
+                self.summon_frame += 1
+            else:
+                if self.summon_frame > 31:
+                    self.is_summoning = False
+                    self.summon_frame = 0
+                    return
+                self.rect.bottom -= 50
+                self.rect.left -= 100
+                self.image = self.bishop_summon_L[self.summon_frame]
+                self.summon_frame += 1
 
 
         
@@ -179,12 +181,14 @@ class Bishop(Enemy):
         if self.hp <= 0:
             self.image = self.bishop_death[int(self.death_frame)]
             self.death_frame += 0.05
+
             if self.death_frame > 6:
+                self.deathcounter += 1
                 self.pos.y = 180
                 self.death_frame = 6.5
                 self.image = self.death_pic
+                self.death = True
                 return
-            self.death = True
 
         
     def render(self, sur, enemy):

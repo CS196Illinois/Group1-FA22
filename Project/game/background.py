@@ -8,11 +8,13 @@ from tkinter import * #Tkinter is used to generate additional windows
 from constants import *
 
 class Background(pygame.sprite.Sprite):
-    def __init__(self, bg):
+    def __init__(self, bg, scalex, scaley):
         super().__init__()
         #load image into var, load method takes in file path of image
         #if image is in same directory, only name and extension is needed
-        self.bgimage = bg
+        width = bg.get_width()
+        height = bg.get_height()
+        self.bgimage = pygame.transform.scale(bg, (int(width * scalex), int(height * scaley)))
         #\Users\helen\Downloads\Background.png
         #store x and y pos of background, good for scrolling backgrounds
         self.bgY = 0

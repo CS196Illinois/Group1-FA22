@@ -20,6 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.max_health = 100
         self.current_health = self.max_health
         self.health_bar_length = 200
+        self.death_frame = 0
         #self.health_ratio = self.max_health / self.health_bar_length
         #self.health_change_speed = 5
         #self.health_bar_width = int(self.current_health / self.health_ratio)
@@ -40,12 +41,12 @@ class Player(pygame.sprite.Sprite):
         self.move_frame = 0
     
     # Combat
-        self.hp = 100
         self.attacking = False
         self.attack_frame = 0
         self.attack_frame = 0
         self.cooldown = False
         self.attackDamage = 10
+        self.death = False
 
         
     #run animation for the right:
@@ -73,6 +74,12 @@ class Player(pygame.sprite.Sprite):
                 pygame.image.load(os.path.join(assets_path, "Player_Attack4_L.png")),pygame.image.load(os.path.join(assets_path, "Player_Attack4_L.png")),
                 pygame.image.load(os.path.join(assets_path, "Player_Attack5_L.png")),pygame.image.load(os.path.join(assets_path, "Player_Attack5_L.png")),
                 pygame.image.load(os.path.join(assets_path, "Player_Sprite_L.png"))]
+#death animation
+        self.death_ani = [pygame.image.load(os.path.join(assets_path, "0-removebg-preview.png")), pygame.image.load(os.path.join(assets_path, "1-removebg-preview.png")),
+                pygame.image.load(os.path.join(assets_path, "2-removebg-preview.png")), pygame.image.load(os.path.join(assets_path, "3-removebg-preview.png")),
+                pygame.image.load(os.path.join(assets_path, "4-removebg-preview.png")), pygame.image.load(os.path.join(assets_path, "5-removebg-preview.png")),
+                pygame.image.load(os.path.join(assets_path, "6-removebg-preview.png")), pygame.image.load(os.path.join(assets_path, "7-removebg-preview.png")),
+                pygame.image.load(os.path.join(assets_path, "8-removebg-preview.png")), pygame.image.load(os.path.join(assets_path, "9-removebg-preview.png")),]
 
     def render(self, sur, player):
         sur.blit(player.image, player.rect)
@@ -171,6 +178,14 @@ class Player(pygame.sprite.Sprite):
             elif self.direction == "LEFT":
                 self.image = self.run_ani_L[self.move_frame]
 
+        if self.current_health <= 0 and self.death_frame < 9:
+            self.image = self.death_ani[int(self.death_frame)]
+            self.death_frame += 0.2
+        if self.death_frame >= 9:
+            self.death = True
+            return
+
+
     def attack(self, enemy):
         #If attack frame has reached the end of sequence, return to base frame
         if self.attack_frame > 10:
@@ -194,9 +209,9 @@ class Player(pygame.sprite.Sprite):
             pygame.time.set_timer(hit_cooldown, 500) #resets cooldown
             enemy.hp -= 10
             if self.direction == "LEFT":
-                enemy.pos.x -= 30
+                enemy.pos.x -= 50
             else:
-                enemy.pos.x += 30
+                enemy.pos.x += 50
             #for now!! 
             print("hit")
     
@@ -236,3 +251,4 @@ class Player(pygame.sprite.Sprite):
                     self.pos.y = lowest.rect.top + 1
                     self.vel.y = 0
                     self.jumping = False
+

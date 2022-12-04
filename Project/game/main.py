@@ -84,6 +84,7 @@ game_over_image = pygame.image.load(os.path.join(assets_path, "game_over.jpg"))
 game_over = Background(game_over_image, 1.2, 1)
 #the collision detection functions that detect collisions requires a sprite group as a paramter
 
+backgroundGroup = pygame.sprite.Group()
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
 player = Player(assets_path)
@@ -170,7 +171,6 @@ while game_run:
 #    health.render()
     for i in enemygroup:
         if i != bishop:
-            level = 1
             i.update(assets_path)
             if i.cooldown == False:
                 i.move()
@@ -179,7 +179,6 @@ while game_run:
                     i.enemy_hit(j)
             i.render(displaysurface)
         elif i == bishop and bishop.is_summoning == False:
-            level = 2
             i.move()
             i.update(assets_path)
             i.render(displaysurface, enemy)

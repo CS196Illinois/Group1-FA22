@@ -164,7 +164,7 @@ while game_run:
             bishop.is_summoning = True
             cclock = clock
         
-        if event.type == JMPCOOLDOWN and cannon.death == True:
+        if event.type == JMPCOOLDOWN and cannon.death == True and player.death == False:
             knight.jmpcooldown = False
             knight.is_jumping = False
             knight.dwn_frame = 0
@@ -289,11 +289,12 @@ while game_run:
         congrats.render(displaysurface)
         if exitVictory.draw(displaysurface):
             pygame.quit()
-
+    print(player.dcounter)
     if player.death == True:
-        player.kill()
         bishop.kill()
-        game_over.render(displaysurface)
+
+        if player.dcounter > 500:
+            game_over.render(displaysurface)
         if exitVictory.draw(displaysurface):
             pygame.quit()
         

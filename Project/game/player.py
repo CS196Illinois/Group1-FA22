@@ -9,6 +9,7 @@ from constants import *
 
 pygame.init()
 class Player(pygame.sprite.Sprite):
+    dcounter = 0
     def __init__(self, assets_path):
         super().__init__()
         self.image = pygame.image.load(os.path.join(assets_path, "Player_Sprite_R.png"))
@@ -82,7 +83,8 @@ class Player(pygame.sprite.Sprite):
                 pygame.image.load(os.path.join(assets_path, "8-removebg-preview.png")), pygame.image.load(os.path.join(assets_path, "9-removebg-preview.png")),]
 
     def render(self, sur, player):
-        sur.blit(player.image, player.rect)
+        if self.death == False:
+            sur.blit(player.image, player.rect)
     
     def getX(self):
         return self.pos.x
@@ -179,6 +181,7 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.run_ani_L[self.move_frame]
 
         if self.current_health <= 0 and self.death_frame < 9:
+            self.dcounter += 1
             self.image = self.death_ani[int(self.death_frame)]
             self.death_frame += 0.2
         if self.death_frame >= 9:

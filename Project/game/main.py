@@ -110,6 +110,7 @@ while True:
         
         if event.type == JMPCOOLDOWN:
             knight.jmpcooldown = False
+            knight.is_jumping = False
             pygame.time.set_timer(JMPCOOLDOWN, 0)
     
     knight.jump(player, enemy)

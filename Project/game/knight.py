@@ -13,15 +13,20 @@ pygame.init()
 class Knight(Enemy):
     jmpcooldown = False
     death = False
+    is_jumping = False
     def __init__(self, assets_path):
         super().__init__(assets_path)
         self.facing = 0
         self.move_frame = 0
         self.attack_frame = 0
         self.crush_frame = 0
+        self.dwn_frame = 0
+        self.vul_frame = 0
         self.is_jumping = False
         self.set_jmpvel = False
         self.crush = False
+        self.hit = False
+        self.death_frame = 0
         self.knight_L =     [pygame.image.load(os.path.join(assets_path, "k0L-modified.png")),
                             pygame.image.load(os.path.join(assets_path, "k1L-modified.png")),
                             pygame.image.load(os.path.join(assets_path, "k2L-modified.png")),
@@ -43,6 +48,20 @@ class Knight(Enemy):
         self.knight_AFA =   [pygame.image.load(os.path.join(assets_path, "AFA0.png")),
                             pygame.image.load(os.path.join(assets_path, "AFA1.png")),
                             pygame.image.load(os.path.join(assets_path, "AFA2.png"))]
+
+        self.knight_VUL =   [pygame.image.load(os.path.join(assets_path, "vul0.png")),
+                            pygame.image.load(os.path.join(assets_path, "vul1.png")),
+                            pygame.image.load(os.path.join(assets_path, "vul2.png"))]
+        
+        self.knight_DWN = [pygame.image.load(os.path.join(assets_path, "DWN0.png")),
+                            pygame.image.load(os.path.join(assets_path, "DWN1.png")),
+                            pygame.image.load(os.path.join(assets_path, "DWN2.png")),
+                            pygame.image.load(os.path.join(assets_path, "DWN3.png"))]
+        
+        self.knight_DEATH = [pygame.image.load(os.path.join(assets_path, "kd0.png")),
+                            pygame.image.load(os.path.join(assets_path, "kd1.png")),
+                            pygame.image.load(os.path.join(assets_path, "kd2.png")),
+                            pygame.image.load(os.path.join(assets_path, "kd3.png"))]
 
         self.image = pygame.image.load(os.path.join(assets_path, "k0-modified.png"))
         self.rect = self.image.get_rect()
@@ -72,6 +91,7 @@ class Knight(Enemy):
         else:
             self.facing = 1
         if self.hp > 0 and self.is_jumping == False:
+            self.dwn_frame = 0
             self.tmp = 3
             self.crush = False
             if self.facing == 0:
@@ -87,14 +107,17 @@ class Knight(Enemy):
                     self.move_frame = 0
                     return
         if self.hp <= 0:
-            self.death = True
-            self.kill()
+            self.image = self.knight_DEATH[int(self.death_frame)]
+            self.death_frame += 0.1
+            if self.death_frame > 4:
+                self.death = True
+                self.kill()
     def jump(self, player, enemy):
         #print('rect center: ' + str(self.rect.center) + 'rect bottom ' + str(self.rect.bottom) +'player bottom ' + str(player.rect.bottom))
         if enemy.death == True:
             if abs((player.pos.x - 50) - self.pos.x) <= 230 and self.jmpcooldown == False:
                 self.is_jumping = True
-            if self.is_jumping == True and self.crush == False:
+            if self.is_jumping == True and self.crush == False and self.jmpcooldown == False:
                 if self.set_jmpvel == False:
                     self.vel.y = -5
                     self.set_jmpvel = True
@@ -103,8 +126,10 @@ class Knight(Enemy):
                     self.crush = True
             if self.crush == True:
                 if abs(self.rect.centerx - player.rect.centerx) < 25 and abs(self.rect.bottom - player.rect.top) < 10:
-                    print('crushed')
-                    player.current_health -= 15
+                    if self.hit == False:
+                        print('crushed')
+                        player.current_health -= 35
+                        self.hit = True
                 self.image = self.knight_AFA[int(self.crush_frame)]
                 self.crush_frame += 0.1
                 if self.crush_frame > 2:
@@ -112,15 +137,26 @@ class Knight(Enemy):
                 self.vel.y = 10
                 self.vel.x = 0
                 if abs(int(self.pos.y) - 230) <= 5:
-                    self.is_jumping = False
                     self.crush = False
                     self.set_jmpvel = False
                     self.jmpcooldown = True
+                    self.hit = False
                     self.pos.y = 230
                     self.vel.y = 0
                     self.acc.y = 0
                     pygame.time.set_timer(JMPCOOLDOWN, 3000)
             if self.jmpcooldown == True:
+                if self.dwn_frame < 4:
+                    self.image = self.knight_DWN[int(self.dwn_frame)]
+                else:
+                    self.image = self.knight_VUL[int(self.vul_frame)]
+                    self.vul_frame += 0.2
+                    if self.vul_frame > 3:
+                        self.vul_frame = 0
+
+                self.dwn_frame += 0.3
+
+
                 self.vel.x = 0
                 self.acc.x = 0
     def render(self, sur, enemy):

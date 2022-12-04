@@ -186,8 +186,6 @@ while game_run:
     # Render functions ----
     #order matters, we must draw the background2 before drawing the ground
     #order matters, we must draw the background before drawing the ground
-    if player.current_health == 0:
-        player.kill()
     
     #display and background2 related functions
     background2.render(displaysurface)
@@ -287,13 +285,13 @@ while game_run:
         if exitVictory.draw(displaysurface):
             pygame.quit()
 
-    if player.current_health <= 0:
-        player.alive = False
+    if player.death == True:
         player.kill()
         bishop.kill()
         game_over.render(displaysurface)
         if exitVictory.draw(displaysurface):
             pygame.quit()
+        
     
     pygame.display.update()
     FPS_CLOCK.tick(FPS)

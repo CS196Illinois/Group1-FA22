@@ -166,6 +166,12 @@ while game_run:
         
         if event.type == JMPCOOLDOWN and cannon.death == True:
             knight.jmpcooldown = False
+            knight.is_jumping = False
+            knight.dwn_frame = 0
+            if knight.facing == 0:
+                knight.image = pygame.image.load(os.path.join(assets_path, "k0-modified.png"))
+            else:
+                knight.image = pygame.image.load(os.path.join(assets_path, "k0L-modified.png"))
             pygame.time.set_timer(JMPCOOLDOWN, 0)
     
         
@@ -269,8 +275,7 @@ while game_run:
         knight.render(displaysurface, cannon)
         knight.move(player)
         knight.update(assets_path, player.pos.x)
-        if knight.hp <= 0:
-            knight.kill()
+        
 
         
     

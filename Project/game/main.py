@@ -111,6 +111,11 @@ while True:
         if event.type == JMPCOOLDOWN:
             knight.jmpcooldown = False
             knight.is_jumping = False
+            knight.dwn_frame = 0
+            if knight.facing == 0:
+                knight.image = pygame.image.load(os.path.join(assets_path, "k0-modified.png"))
+            else:
+                knight.image = pygame.image.load(os.path.join(assets_path, "k0L-modified.png"))
             pygame.time.set_timer(JMPCOOLDOWN, 0)
     
     knight.jump(player, enemy)

@@ -14,13 +14,15 @@ class Knight(Enemy):
     jmpcooldown = False
     death = False
     is_jumping = False
+    facing = 0
+    dwn_frame = 0
+
     def __init__(self, assets_path):
         super().__init__(assets_path)
-        self.facing = 0
+        
         self.move_frame = 0
         self.attack_frame = 0
         self.crush_frame = 0
-        self.dwn_frame = 0
         self.vul_frame = 0
         self.is_jumping = False
         self.set_jmpvel = False

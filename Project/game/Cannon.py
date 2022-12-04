@@ -23,9 +23,8 @@ class Cannon(Enemy):
         self.image_num = 0
         self.image_index = 0
         self.pos.y += 25
-        self.flag = True
-        if self.direction == 0:
-            self.image = pygame.transform.flip(self.image, True, False)
+        self.flag = False
+        self.death = False
         
     
     def display(self):
@@ -47,6 +46,7 @@ class Cannon(Enemy):
         if self.hp <= 0:
             self.kill()
             self.flag = False
+            self.death = True
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, assets_path, cannon):
@@ -54,6 +54,7 @@ class Bullet(pygame.sprite.Sprite):
         self.image = pygame.image.load(os.path.join(assets_path, "Bomb_test.png"))
         self.size = self.image.get_size()
         self.image = pygame.transform.scale(self.image, (int(self.size[0]/3), int(self.size[1]/3)))
+        self.rect = self.image.get_rect()
         self.x = cannon.pos.x 
         self.y = 250  
         self.direction = cannon.direction
@@ -64,6 +65,10 @@ class Bullet(pygame.sprite.Sprite):
             self.x -= 5
         elif (self.x >= 700 or self.x <= 0):
             self.kill()
+        self.rect.center = vec(self.x, self.y)
     def render(self, sur):
         sur.blit(self.image, (self.x, self.y))
+    def hit(self, player):
+        player.current_health -= 10
+        self.kill()
             

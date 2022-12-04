@@ -26,14 +26,15 @@ class Enemy(pygame.sprite.Sprite):
         self.direction = random.randint(0, 1) #0 for right, 1 for left
         self.vel.x = 4 #randomizing velocity of enemy
         self.cooldown = False
+        self.sequence = 0
 
         #sets starting position 
         #sets the initial position of the enemy
         if self.direction == 0:
-            self.pos.x = 0
+            self.pos.x = 1
             self.pos.y = 235
         if self.direction == 1:
-            self.pos.x = 700
+            self.pos.x = 699
             self.pos.y = 235
         
     def move(self, player=None):
@@ -63,6 +64,7 @@ class Enemy(pygame.sprite.Sprite):
         if self.hp < 0:
             self.kill()
             self.death = True
+            self.sequence += 1
 
     def enemy_hit(self, player):
         if self.cooldown == False: #if cooldown is over 
@@ -76,4 +78,4 @@ class Enemy(pygame.sprite.Sprite):
                 player.pos.x += 50
                 self.pos.x -= 50
             #for now!! 
-            print("enemy hit")
+            #print("enemy hit")

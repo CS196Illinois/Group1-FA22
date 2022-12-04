@@ -155,11 +155,14 @@ class Knight(Enemy):
                     self.acc.y = 0
                     pygame.time.set_timer(JMPCOOLDOWN, 3000)
             if self.jmpcooldown == True:
-             #   if player.current_health <= 0:
-             #       self.image = self.knight_TBAG[int(self.tbagframe)]
-             #       if self.tbagframe > 4:
-             #           self.tbagframe = 0
-               # else:
+                if player.current_health <= 0:
+                    self.image = self.knight_TBAG[int(self.tbagframe)]
+                    self.tbagframe += 0.3
+                    self.vel.x = 0
+                    self.acc.x = 0
+                    if self.tbagframe >= 3:
+                       self.tbagframe = 0
+                else:
 
                     if self.dwn_frame < 4:
                         self.image = self.knight_DWN[int(self.dwn_frame)]

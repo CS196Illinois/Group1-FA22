@@ -138,8 +138,8 @@ class Bishop(Enemy):
                 self.pos.y = 180
                 self.death_frame = 6.5
                 self.image = self.death_pic
+                self.death = True
                 return
-            self.death = True
 
         
     def render(self, sur, enemy):

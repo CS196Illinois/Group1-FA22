@@ -14,10 +14,12 @@ from Cannon import*
 #from Bullet import*
 from bishop import *
 from lightning import *
+from button import *
 
 #initializing variables and settings
 
 pygame.init() #begin pygame
+pygame.font.init()
 
 #create absolute path
 base_path = os.path.dirname(__file__)
@@ -29,7 +31,7 @@ print("line 24: " + str(assets_path))
 #loading animations
 #creates display for pygame video, and changes title of window to "game"
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Game")
+pygame.display.set_caption("Pawn's Game")
 
 #creates an event called hit_cooldown by adding 1 into the current index of pygame events
 #makes surue that pygame won't record 60 collisions (how many it checks for in one second)
@@ -38,19 +40,59 @@ pygame.display.set_caption("Game")
 
 #creating barebones of main classes
 
-#put all sprite groups in the global space 
-background = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
+#intro materials
+backgroundimage = pygame.image.load(os.path.join(assets_path, "Background.png"))
+background2 = Background(backgroundimage, 1, 1)
 ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
+start_img = pygame.image.load(os.path.join(assets_path, "start_btn.png"))
+exit_img = pygame.image.load(os.path.join(assets_path, "exit_button.png"))
+start_button = Button(100, 200, start_img, 0.8)
+exit_button = Button(450, 200, exit_img, 0.8)
+exitVictory = Button(500, 300, exit_img, 0.3)
+
+#text
+titleFont = pygame.font.SysFont('Courier', 100)
+text_surface = titleFont.render('PAWN', False, (0, 0, 0))
+#game start vars
+start_run = True
+game_run = False
+while start_run:
+    background2.render(displaysurface)
+    ground.render(displaysurface)
+    displaysurface.blit(text_surface, (250, 50))
+    if (start_button.draw(displaysurface)):
+        start_run = False
+        game_run = True
+
+    if (exit_button.draw(displaysurface)):
+        start_run = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+    pygame.display.update()
+
+
+#put all sprite groups in the global space
+
+#victory screen
+victory_image = pygame.image.load(os.path.join(assets_path, "victoryScreen.jpg"))
+congrats = Background(victory_image, 0.7, 0.4)
+
+#game over screen
+game_over_image = pygame.image.load(os.path.join(assets_path, "game_over.jpg"))
+game_over = Background(game_over_image, 1.2, 1)
 #the collision detection functions that detect collisions requires a sprite group as a paramter
 
+backgroundGroup = pygame.sprite.Group()
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
 player = Player(assets_path)
 Playergroup = pygame.sprite.Group()
 Playergroup.add(player)
 enemy = Enemy(assets_path)
-enemygroup = pygame.sprite.Group()
 bishop = Bishop(assets_path)
+enemygroup = pygame.sprite.Group()
 enemygroup.add(bishop)
 enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
@@ -66,17 +108,17 @@ clock = 1001
 cclock = 0
 enemy.sequence = 0
 #Creating game and event loop
+
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
-while True:
-    #print('bullet x: ' + str(bullet.x) + ' y: ' + str(bullet.y))
+while game_run:
     player.gravity_check(player, ground_group)
     #print('line 87')
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
         if event.type == QUIT:
             pygame.quit()
-            sys.exit
+            sys.exit()
 
         #For events that occur upon clicking the mouse (left)
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -123,12 +165,13 @@ while True:
         player.attack(cannon)
     player.move()
     # Render functions ----
+    #order matters, we must draw the background2 before drawing the ground
     #order matters, we must draw the background before drawing the ground
     if player.current_health == 0:
         player.kill()
     
-    #display and background related functions
-    background.render(displaysurface)
+    #display and background2 related functions
+    background2.render(displaysurface)
     ground.render(displaysurface)
     #healthbar
     pygame.draw.rect(displaysurface,player.get_healthbar_color(),(10,10,player.get_heatlhbar_length(),25))
@@ -207,6 +250,20 @@ while True:
         bishop.render(displaysurface, enemy)
         bishop.move()
         bishop.update(assets_path)
+    
+    if bishop.death == True:
+        congrats.render(displaysurface)
+        if exitVictory.draw(displaysurface):
+            pygame.quit()
+
+    if player.current_health <= 0:
+        player.alive = False
+        player.kill()
+        bishop.kill()
+        game_over.render(displaysurface)
+        if exitVictory.draw(displaysurface):
+            pygame.quit()
+    
     pygame.display.update()
     FPS_CLOCK.tick(FPS)
     clock += 1

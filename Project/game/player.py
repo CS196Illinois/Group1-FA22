@@ -45,6 +45,7 @@ class Player(pygame.sprite.Sprite):
         self.attack_frame = 0
         self.cooldown = False
         self.attackDamage = 10
+        self.alive = True
 
         
     #run animation for the right:
@@ -169,6 +170,7 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.run_ani_R[self.move_frame]
             elif self.direction == "LEFT":
                 self.image = self.run_ani_L[self.move_frame]
+
 
     def attack(self, enemy):
         #If attack frame has reached the end of sequence, return to base frame

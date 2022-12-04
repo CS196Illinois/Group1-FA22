@@ -282,7 +282,7 @@ while game_run:
         bishop.move()
         bishop.update(assets_path)
     
-    if bishop.death == True and bishop.deathcounter > 300:
+    if bishop.death == True and bishop.deathcounter > 200:
         congrats.render(displaysurface)
         if exitVictory.draw(displaysurface):
             pygame.quit()

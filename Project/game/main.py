@@ -14,7 +14,7 @@ from Cannon import*
 #from Bullet import*
 from bishop import *
 from lightning import *
-
+from music import *
 #initializing variables and settings
 
 pygame.init() #begin pygame
@@ -42,7 +42,7 @@ pygame.display.set_caption("Game")
 background = Background(pygame.image.load(os.path.join(assets_path, "Background.png")))
 ground = Ground(pygame.image.load(os.path.join(assets_path, "Ground.png")))
 #the collision detection functions that detect collisions requires a sprite group as a paramter
-
+mmanager = MusicManager()
 ground_group = pygame.sprite.Group()
 ground_group.add(ground)
 player = Player(assets_path)
@@ -68,16 +68,18 @@ enemy.sequence = 0
 #Creating game and event loop
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
 #an event is created every time something happens 
+mmanager.playsoundtrack(os.path.join(assets_path, "battle-of-the-dragons-8037.mp3"), -1, 0.05)
 while True:
     #print('bullet x: ' + str(bullet.x) + ' y: ' + str(bullet.y))
     player.gravity_check(player, ground_group)
     #print('line 87')
+    
     for event in pygame.event.get():
         #Will run when the close window button is clicked 
         if event.type == QUIT:
             pygame.quit()
             sys.exit
-
+            mmanager.stop()
         #For events that occur upon clicking the mouse (left)
         if event.type == pygame.MOUSEBUTTONDOWN:
             if player.attacking == False: # checking to make sure that we only attack after the first is over 

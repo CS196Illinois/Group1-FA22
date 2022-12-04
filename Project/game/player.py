@@ -15,16 +15,10 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.swordHit = pygame.Rect(self.rect.right - 20, self.rect.top, 20, self.rect.height)
         self.jumping = False
-#       self.health_ani = health_ani
         self.target_health = 500
         self.max_health = 100
         self.current_health = self.max_health
         self.health_bar_length = 200
-        #self.health_ratio = self.max_health / self.health_bar_length
-        #self.health_change_speed = 5
-        #self.health_bar_width = int(self.current_health / self.health_ratio)
-        #self.health_bar = pygame.Rect(10,40,self.health_bar_width,25)
-        #self.transition_bar = pygame.Rect(self.health_bar.right,45,self.transition_width,25) 
     
     #  Position and direction
         self.vx = 0

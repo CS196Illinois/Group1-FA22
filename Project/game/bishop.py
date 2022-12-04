@@ -14,6 +14,7 @@ class Bishop(Enemy):
     killed = False
     is_summoning = False
     death = False
+    deathcounter = 0
     def __init__(self, assets_path):
         super().__init__(assets_path)
         self.move_frame = 0
@@ -86,6 +87,39 @@ class Bishop(Enemy):
                             pygame.image.load(os.path.join(assets_path, "70.png")),
                             pygame.image.load(os.path.join(assets_path, "70.png"))]
 
+        self.bishop_summon_L = [pygame.image.load(os.path.join(assets_path, "00L.png")),
+                            pygame.image.load(os.path.join(assets_path, "00L.png")),
+                            pygame.image.load(os.path.join(assets_path, "00L.png")),
+                            pygame.image.load(os.path.join(assets_path, "00L.png")),
+                            pygame.image.load(os.path.join(assets_path, "10L.png")),
+                            pygame.image.load(os.path.join(assets_path, "10L.png")),
+                            pygame.image.load(os.path.join(assets_path, "10L.png")),
+                            pygame.image.load(os.path.join(assets_path, "10L.png")),
+                            pygame.image.load(os.path.join(assets_path, "20L.png")),
+                            pygame.image.load(os.path.join(assets_path, "20L.png")),
+                            pygame.image.load(os.path.join(assets_path, "20L.png")),
+                            pygame.image.load(os.path.join(assets_path, "20L.png")),
+                            pygame.image.load(os.path.join(assets_path, "30L.png")),
+                            pygame.image.load(os.path.join(assets_path, "30L.png")),
+                            pygame.image.load(os.path.join(assets_path, "30L.png")),
+                            pygame.image.load(os.path.join(assets_path, "30L.png")),
+                            pygame.image.load(os.path.join(assets_path, "40L.png")),
+                            pygame.image.load(os.path.join(assets_path, "40L.png")),
+                            pygame.image.load(os.path.join(assets_path, "40L.png")),
+                            pygame.image.load(os.path.join(assets_path, "40L.png")),
+                            pygame.image.load(os.path.join(assets_path, "50L.png")),
+                            pygame.image.load(os.path.join(assets_path, "50L.png")),
+                            pygame.image.load(os.path.join(assets_path, "50L.png")),
+                            pygame.image.load(os.path.join(assets_path, "50L.png")),
+                            pygame.image.load(os.path.join(assets_path, "60L.png")),
+                            pygame.image.load(os.path.join(assets_path, "60L.png")),
+                            pygame.image.load(os.path.join(assets_path, "60L.png")),
+                            pygame.image.load(os.path.join(assets_path, "60L.png")),
+                            pygame.image.load(os.path.join(assets_path, "70L.png")),
+                            pygame.image.load(os.path.join(assets_path, "70L.png")),
+                            pygame.image.load(os.path.join(assets_path, "70L.png")),
+                            pygame.image.load(os.path.join(assets_path, "70L.png"))]
+
         self.death_pic = pygame.image.load(os.path.join(assets_path, "grave.png"))
 
         self.image = pygame.image.load(os.path.join(assets_path, "1.png"))
@@ -102,21 +136,34 @@ class Bishop(Enemy):
         self.vel = vec(0,0)
         self.rect.center = self.pos
 
-    def summon(self, assests_path):
-        if self.summon_frame > 31:
-            self.is_summoning = False
-            self.summon_frame = 0
-            return
-        self.rect.bottom = self.pos.y
-        self.image = self.bishop_summon[self.summon_frame]
-        self.summon_frame += 1
+    def summon(self, assests_path, player):
+        if self.hp > 0:
+            if self.pos.x < player:
+                if self.summon_frame > 31:
+                    self.is_summoning = False
+                    self.summon_frame = 0
+                    return
+                self.rect.bottom -= 50
+                self.rect.left -= 100
+                self.image = self.bishop_summon[self.summon_frame]
+                self.summon_frame += 1
+            else:
+                if self.summon_frame > 31:
+                    self.is_summoning = False
+                    self.summon_frame = 0
+                    return
+                self.rect.bottom -= 50
+                self.rect.left -= 100
+                self.image = self.bishop_summon_L[self.summon_frame]
+                self.summon_frame += 1
+
 
         
 
     def updateRight(self, assets_path):
         if self.hp > 0:
-            self.image = self.bishop_idle_R[self.move_frame]
-            self.move_frame += 1
+            self.image = self.bishop_idle_R[int(self.move_frame)]
+            self.move_frame += 0.3
             if self.move_frame > 11:
                 self.move_frame = 0
                 return
@@ -124,8 +171,8 @@ class Bishop(Enemy):
 
     def updateLeft(self, assets_path):
         if self.hp > 0:
-            self.image = self.bishop_idle_L[self.move_frame]
-            self.move_frame += 1
+            self.image = self.bishop_idle_L[int(self.move_frame)]
+            self.move_frame += 0.3
             if self.move_frame > 11:
                 self.move_frame = 0
                 return
@@ -134,7 +181,9 @@ class Bishop(Enemy):
         if self.hp <= 0:
             self.image = self.bishop_death[int(self.death_frame)]
             self.death_frame += 0.05
+
             if self.death_frame > 6:
+                self.deathcounter += 1
                 self.pos.y = 180
                 self.death_frame = 6.5
                 self.image = self.death_pic

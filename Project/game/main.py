@@ -10,6 +10,7 @@ from player import *
 from enemy import *
 from bishop import *
 from lightning import *
+from knight import *
 from Cannon import*
 #from Bullet import*
 from bishop import *
@@ -95,6 +96,8 @@ bishop = Bishop(assets_path)
 enemygroup = pygame.sprite.Group()
 enemygroup.add(bishop)
 enemygroup.add(enemy)
+knight = Knight(assets_path)
+enemygroup.add(knight)
 lightninggroup = pygame.sprite.Group()
 cannon = Cannon(assets_path)
 enemygroup.add(cannon)
@@ -124,7 +127,10 @@ while game_run:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
-                    player.attack(bishop)
+                    if knight.death == True:
+                        player.attack(bishop)
+                    if enemy.death == True and knight.jmpcooldown == True:
+                        player.attack(knight)
                     player.attack(cannon)
                     player.attacking = True
         #event handling for a range of different key presses
@@ -134,7 +140,10 @@ while game_run:
             if event.key == pygame.K_RETURN: # enter key 
                 if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
-                    player.attack(bishop)
+                    if knight.death == True:
+                        player.attack(bishop)
+                    if enemy.death == True and knight.jmpcooldown == True:
+                        player.attack(knight)
                     player.attack(cannon)
                     player.attacking = True
         #automatically disables cooldown once something is hit 
@@ -147,12 +156,19 @@ while game_run:
                 i.cooldown = False
             pygame.time.set_timer(enemy_cooldown, 0)
         
-        if event.type == TELEPORT and bishop.death == False:
+        
+        if event.type == TELEPORT and bishop.death == False and bishop.is_summoning == False:
             bishop.teleport(assets_path)
 
-        if event.type == SUMMONLIGHTNING and bishop.death == False and cannon.death == True: 
+        if event.type == SUMMONLIGHTNING and bishop.hp > 0 and knight.death == True: 
             bishop.is_summoning = True
             cclock = clock
+        
+        if event.type == JMPCOOLDOWN and cannon.death == True:
+            knight.jmpcooldown = False
+            pygame.time.set_timer(JMPCOOLDOWN, 0)
+    
+        
         
         if (event.type == BULLLETFIRE and cannon.flag):
             b = Bullet(assets_path, cannon)
@@ -161,7 +177,10 @@ while game_run:
     player.update()
     if player.attacking == True:
         player.attack(enemy)
-        player.attack(bishop)
+        if knight.death == True:
+            player.attack(bishop)
+        if enemy.death == True and knight.jmpcooldown == True:
+            player.attack(knight)
         player.attack(cannon)
     player.move()
     # Render functions ----
@@ -187,31 +206,34 @@ while game_run:
         cannon.flag = True
         pygame.time.set_timer(BULLLETFIRE, 2000)
     if enemy.sequence == 0:
-        enemy.update(assets_path)
+        enemy.update(assets_path, player)
         if enemy.cooldown == False:
-            enemy.move()
+            enemy.move(player)
         for j in Playergroup:
             if enemy.rect.colliderect(j.rect):
                 enemy.enemy_hit(j)
-        enemy.render(displaysurface)
+        enemy.render(displaysurface, enemy)
     elif enemy.sequence == 1 and not cannon.death:
         cannon.update(assets_path)
         if cannon.cooldown == False:
-            cannon.move()
+            cannon.move(player)
         for j in Playergroup:
             if cannon.rect.colliderect(j.rect):
                 cannon.enemy_hit(j)
         cannon.render(displaysurface)
-    elif bishop.is_summoning == False:
+    elif bishop.is_summoning == False and knight.death == True:
         bishop.move()
         bishop.update(assets_path)
-        bishop.render(displaysurface, enemy)
+        bishop.render(displaysurface, knight)
         if (bishop.pos.x > player.pos.x):
             bishop.updateLeft(assets_path)
         else:
             bishop.updateRight(assets_path)
     """for i in enemygroup:
         if i != bishop:
+            i.update(assets_path, player.pos.x)
+            i.move(player.rect)
+            i.render(displaysurface, enemy)
             i.update(assets_path)
             if i.cooldown == False:
                 i.move()
@@ -222,7 +244,7 @@ while game_run:
         elif i == bishop and bishop.is_summoning == False:
             i.move()
             i.update(assets_path)
-            i.render(displaysurface, enemy)
+            i.render(displaysurface, knight)
             if (bishop.pos.x > player.pos.x):
                 i.updateLeft(assets_path)
             else:
@@ -243,15 +265,24 @@ while game_run:
                 if i.rect.colliderect(j.rect):
                     i.hit(j)
         i.render(displaysurface)
+
+    if cannon.death == True:
+        knight.jump(player, cannon)
+        knight.render(displaysurface, cannon)
+        knight.move(player)
+        knight.update(assets_path, player.pos.x)
+        if knight.hp <= 0:
+            knight.kill()
+
         
     
     if bishop.is_summoning == True:
-        bishop.summon(assets_path)
-        bishop.render(displaysurface, enemy)
+        bishop.summon(assets_path, player.pos.x)
+        bishop.render(displaysurface, knight)
         bishop.move()
         bishop.update(assets_path)
     
-    if bishop.death == True:
+    if bishop.death == True and bishop.deathcounter > 200:
         congrats.render(displaysurface)
         if exitVictory.draw(displaysurface):
             pygame.quit()

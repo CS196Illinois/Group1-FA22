@@ -36,8 +36,7 @@ class Enemy(pygame.sprite.Sprite):
         if self.direction == 1:
             self.pos.x = 699
             self.pos.y = 235
-        
-    def move(self, player=None):
+    def move(self, player):
         # causes the enemy to change directions upon reaching the end of screen
         if self.pos.x >= (WIDTH-20): # makes sure there is a little margin between the enemy and the screen
             self.image = pygame.transform.flip(self.image, True, False)
@@ -55,13 +54,13 @@ class Enemy(pygame.sprite.Sprite):
             self.pos.x -= self.vel.x
         
         self.rect.center = self.pos #Updates rect 
-    def render(self,sur):
+    def render(self,sur,enemy):
         #displayed the enemy on screen
         sur.blit(self.image, (self.pos.x, self.pos.y))
-    def update(self, assets_path):
+    def update(self, assets_path, player):
         if self.hp < 30:
             self.image = pygame.image.load(os.path.join(assets_path, "Enemy2.png"))
-        if self.hp < 0:
+        if self.hp <= 0:
             self.kill()
             self.death = True
             self.sequence += 1

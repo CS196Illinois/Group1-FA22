@@ -2,8 +2,6 @@ import pygame
 import os
 from pygame.locals import *
 import sys
-import random
-from tkinter import filedialog #from the GUI library Tkinter
 from tkinter import * #Tkinter is used to generate additional windows
 from constants import *
 from background import *
@@ -12,6 +10,8 @@ from player import *
 from enemy import *
 from bishop import *
 from lightning import *
+from Cannon import*
+#from Bullet import*
 from bishop import *
 from lightning import *
 from button import *
@@ -96,11 +96,17 @@ enemygroup = pygame.sprite.Group()
 enemygroup.add(bishop)
 enemygroup.add(enemy)
 lightninggroup = pygame.sprite.Group()
+cannon = Cannon(assets_path)
+enemygroup.add(cannon)
+bulletgroup = pygame.sprite.Group()
+#bullet = Bullet(assets_path, cannon)
+#bulletgroup.add(bullet)
 clock = 1001
 cclock = 0
 lightninggroup = pygame.sprite.Group()
 clock = 1001
 cclock = 0
+enemy.sequence = 0
 #Creating game and event loop
 
 #everything in game loop is meant to be code that needs to be refreshed/updated every frame
@@ -119,6 +125,7 @@ while game_run:
             if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
                     player.attack(bishop)
+                    player.attack(cannon)
                     player.attacking = True
         #event handling for a range of different key presses
         if event.type == pygame.KEYDOWN:
@@ -128,6 +135,7 @@ while game_run:
                 if player.attacking == False: # checking to make sure that we only attack after the first is over 
                     player.attack(enemy)
                     player.attack(bishop)
+                    player.attack(cannon)
                     player.attacking = True
         #automatically disables cooldown once something is hit 
         if event.type == hit_cooldown:
@@ -135,20 +143,26 @@ while game_run:
             pygame.time.set_timer(hit_cooldown, 0)
 
         if event.type == enemy_cooldown:
-            enemy.cooldown = False
+            for i in enemygroup:
+                i.cooldown = False
             pygame.time.set_timer(enemy_cooldown, 0)
         
         if event.type == TELEPORT and bishop.death == False:
             bishop.teleport(assets_path)
 
-        if event.type == SUMMONLIGHTNING and bishop.death == False and enemy.death == True: 
+        if event.type == SUMMONLIGHTNING and bishop.death == False and cannon.death == True: 
             bishop.is_summoning = True
             cclock = clock
+        
+        if (event.type == BULLLETFIRE and cannon.flag):
+            b = Bullet(assets_path, cannon)
+            bulletgroup.add(b)
 
     player.update()
     if player.attacking == True:
         player.attack(enemy)
         player.attack(bishop)
+        player.attack(cannon)
     player.move()
     # Render functions ----
     #order matters, we must draw the background2 before drawing the ground
@@ -169,7 +183,34 @@ while game_run:
     # if player.health > 0:
     #     displaysurface.blit(player.image, player.rect)
 #    health.render()
-    for i in enemygroup:
+    if not cannon.flag and not cannon.death and enemy.death:
+        cannon.flag = True
+        pygame.time.set_timer(BULLLETFIRE, 2000)
+    if enemy.sequence == 0:
+        enemy.update(assets_path)
+        if enemy.cooldown == False:
+            enemy.move()
+        for j in Playergroup:
+            if enemy.rect.colliderect(j.rect):
+                enemy.enemy_hit(j)
+        enemy.render(displaysurface)
+    elif enemy.sequence == 1 and not cannon.death:
+        cannon.update(assets_path)
+        if cannon.cooldown == False:
+            cannon.move()
+        for j in Playergroup:
+            if cannon.rect.colliderect(j.rect):
+                cannon.enemy_hit(j)
+        cannon.render(displaysurface)
+    elif bishop.is_summoning == False:
+        bishop.move()
+        bishop.update(assets_path)
+        bishop.render(displaysurface, enemy)
+        if (bishop.pos.x > player.pos.x):
+            bishop.updateLeft(assets_path)
+        else:
+            bishop.updateRight(assets_path)
+    """for i in enemygroup:
         if i != bishop:
             i.update(assets_path)
             if i.cooldown == False:
@@ -185,7 +226,7 @@ while game_run:
             if (bishop.pos.x > player.pos.x):
                 i.updateLeft(assets_path)
             else:
-                i.updateRight(assets_path)
+                i.updateRight(assets_path)"""
     for i in lightninggroup:
         i.update(assets_path, player)
         i.render(displaysurface)
@@ -196,6 +237,14 @@ while game_run:
         lightninggroup.add(lightning)
         cpos = player.pos.x
 
+    for i in bulletgroup:
+        i.move()
+        for j in Playergroup:
+                if i.rect.colliderect(j.rect):
+                    i.hit(j)
+        i.render(displaysurface)
+        
+    
     if bishop.is_summoning == True:
         bishop.summon(assets_path)
         bishop.render(displaysurface, enemy)

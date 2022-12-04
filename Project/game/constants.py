@@ -11,6 +11,7 @@ pygame.init()
 hit_cooldown = pygame.USEREVENT + 1
 SUMMONLIGHTNING = pygame.USEREVENT + 2
 TELEPORT = pygame.USEREVENT + 3
+BULLLETFIRE = pygame.USEREVENT + 5
 enemy_cooldown = pygame.USEREVENT + 4
 pygame.time.set_timer(SUMMONLIGHTNING, random.randint(5000, 12000))
 pygame.time.set_timer(TELEPORT, random.randint(5000, 10000))
@@ -26,4 +27,5 @@ FPS = 60
 #clock object used to limit game loop to 60fps
 FPS_CLOCK = pygame.time.Clock()
 COUNT = 0
+
 
